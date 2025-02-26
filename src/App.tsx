@@ -5,7 +5,7 @@ import * as Tone from "tone";
 import "./App.css";
 
 function App() {
-  const synth = new Tone.Synth().toDestination();
+  const synth = new Tone.PolySynth(Tone.Synth).toDestination();
   const [count, setCount] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
@@ -28,8 +28,8 @@ function App() {
   ];
 
   const toggleNote = (note: Note) => {
-    if (isActive == true) {
-      synth.triggerRelease();
+    if (isActive) {
+      synth.triggerRelease(note.name);
     } else {
       synth.triggerAttack(note.name, note.duration);
     }
@@ -68,20 +68,13 @@ function App() {
         <button
           //Play note C4 for a duration of an 8th note
           onClick={() => {
-            synth.triggerRelease();
+            synth.triggerRelease("C4");
           }}
         >
           Stop Sound
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-
-        {listNotes}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>{listNotes}</div>
     </>
   );
 }
