@@ -130,10 +130,10 @@ function App() {
         <button
           //Play note C4 for a duration of an 8th note
           onClick={() => {
-            synth.triggerRelease();
+            synth.dispose();
           }}
         >
-          Stop Sound
+          STOP ALL SOUNDS!!
         </button>
       </div>
 
