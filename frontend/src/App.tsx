@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Tone from "tone";
 import "./App.css";
+import useKeyboardSynth from "./hooks/useKeyboardSynth";
 
 import { Slider } from "@/components/ui/slider";
 
@@ -9,44 +10,19 @@ interface Note {
   duration: string;
 }
 
-function Key({
-  note,
-  synth,
-  synthRef,
-}: {
-  note: Note;
-  synth: Tone.AMSynth;
-  synthRef: React.RefObject<Tone.AMSynth | null>;
-}) {
-  return (
-    <>
-      <div>
-        <button
-          onMouseDown={() => synth?.triggerAttack(note.name, note.duration)}
-          onMouseUp={() => synth?.triggerRelease()}
-          onMouseLeave={() => synth?.triggerRelease()}
-        >
-          {note.name}
-        </button>
-      </div>
-    </>
-  );
-}
-
 function App() {
-  const synth = new Tone.AMSynth().toDestination();
-  const synthRef = useRef<Tone.AMSynth | null>(null);
-
-  const [count, setCount] = useState(0);
+  const { synthRef, playNote } = useKeyboardSynth();
 
   const [sliderValue, setSliderValue] = useState([40]);
+  const [currSynthName, setCurrSynthName] = useState(synthRef?.current?.name);
 
-  const [currSynthName, setCurrSynthName] = useState(synth.name);
-  const [isActive, setIsActive] = useState(false);
+  useEffect(() => {
+    setCurrSynthName(synthRef?.current?.name);
+  }, [synthRef]);
 
-  synth.debug = true;
+  //Empty array to store the current notes pressed, when a key is held down add it to the array,
+  // When a key is released remove it from the array
 
-  console.log(synthRef.current?.oscillator.type.toString());
   const notes: Note[] = [
     { name: "C2", duration: "8n" },
     { name: "D2", duration: "8n" },
@@ -71,41 +47,15 @@ function App() {
     { name: "B5", duration: "8n" },
   ];
 
-  useEffect(() => {
-    synthRef.current = new Tone.AMSynth().toDestination();
-    // const chorus = new Tone.Chorus(4, 2.5, 0.5).toDestination().start();
-    // synthRef.current?.connect(chorus);
-    console.log("again?");
-    return () => {
-      synthRef.current?.dispose();
-      console.log("disposed?");
-    };
-  }, []);
-
-  const SynthRelease = () => {
-    synthRef.current?.triggerRelease();
-  };
-
-  const handleToggle = (note: Note) => {
-    if (!isActive) {
-      synthRef.current?.triggerAttack(note.name, note.duration, 0.8);
-    } else {
-      synthRef.current?.triggerRelease();
-    }
-    console.log(synthRef.current);
-    console.log(`note ${note.name}: ${isActive}`);
-    setIsActive(!isActive);
-  };
-
   const listNotes = notes.map((note: Note) => (
     <button
       key={note.name}
       // onClick={() => handleToggle(note)}
       onMouseDown={() =>
-        synthRef.current?.triggerAttack(note.name, note.duration)
+        synthRef?.current?.triggerAttack(note.name, note.duration)
       }
-      onMouseUp={() => synthRef.current?.triggerRelease()}
-      onMouseLeave={() => synthRef.current?.triggerRelease()}
+      onMouseUp={() => synthRef?.current?.triggerRelease(note.name)}
+      onMouseLeave={() => synthRef?.current?.triggerRelease(note.name)}
     >
       {note.name}
     </button>
@@ -114,34 +64,28 @@ function App() {
   return (
     <>
       <h1>Current Synth: {currSynthName}</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
 
+      <div className="card">
         <button
           onMouseDown={() => {
-            synth.triggerAttack("C4", "8n");
+            synthRef?.current?.triggerAttack("C4", "8n");
           }}
-          onMouseUp={() => synth.triggerRelease()}
+          onMouseUp={() => synthRef?.current?.triggerRelease("C4")}
         >
           Start Sound
         </button>
         <button
           //Play note C4 for a duration of an 8th note
           onClick={() => {
-            synth.dispose();
+            // This stops "C4" from playing, until a new render is triggered for some reason.
+            // Weird bug that I need to figure out.
+            synthRef?.current?.dispose();
+            console.log("STOP ALL SOUNDS CLICKED");
           }}
         >
           STOP ALL SOUNDS!!
         </button>
       </div>
-
-      <Key
-        note={{ name: "C4", duration: "8n" }}
-        synth={synth}
-        synthRef={synthRef}
-      ></Key>
 
       <div>{listNotes}</div>
 
@@ -158,7 +102,7 @@ function App() {
       </div>
 
       <div>
-        <ul>
+        {/* <ul>
           <li>
             <p>{synthRef.current?.name}</p>
           </li>
@@ -171,7 +115,7 @@ function App() {
           <li>
             <p>{synth.volume.value.toString()}</p>
           </li>
-        </ul>
+        </ul> */}
       </div>
     </>
   );
