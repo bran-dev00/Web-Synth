@@ -19,12 +19,15 @@ function App() {
     triggerAttackRelease,
   } = useContext(SynthContext);
 
+  //keyboard mapping handling
+  useKeyboardSynth();
+
   const [sliderValue, setSliderValue] = useState([40]);
   const [currSynthName, setCurrSynthName] = useState(synthRef?.current?.name);
 
   useEffect(() => {
     setCurrSynthName(synthRef?.current?.name);
-  }, [synthRef]);
+  }, [synthRef?.current]);
 
   const notes: Note[] = [
     { name: "C2", duration: "8n" },
@@ -76,7 +79,7 @@ function App() {
 
   return (
     <>
-      <h1>Current Synth: {synthRef?.current?.name}</h1>
+      <h1>Current Synth: {currSynthName}</h1>
       <div>
         <SynthSelect />
       </div>
@@ -111,7 +114,7 @@ function App() {
           width={"200px"}
           defaultValue={[40]}
           value={sliderValue}
-          onValueChange={(e) => setSliderValue(e.value)}
+          onValueChange={(e: EventTarget) => setSliderValue(e.value)}
         ></Slider>
 
         <p>{sliderValue}</p>

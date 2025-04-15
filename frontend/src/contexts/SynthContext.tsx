@@ -1,7 +1,7 @@
 import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
 import { SynthTypes, Note } from "../types/types";
-
+import { useKeyboardSynth } from "@/hooks/useKeyboardSynth";
 // synthtypes
 
 {
@@ -78,7 +78,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
         case "PolySynth":
           setIsPolyphonic(true);
           setCurrentSynthType("PolySynth");
-          synthRef.current = new Tone.PolySynth(Tone.MonoSynth).toDestination();
+          synthRef.current = new Tone.PolySynth(Tone.FMSynth).toDestination();
           break;
         case "MonoSynth":
           setIsPolyphonic(false);
@@ -128,6 +128,8 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
         currentNotesPressed.push(note.name);
         synth.triggerAttack(note.name);
       } else {
+        if (currentNotesPressed.includes(note.name)) return;
+        currentNotesPressed.push(note.name);
         synth.triggerAttack(note.name);
       }
     }
@@ -144,7 +146,14 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
           currentNotesPressed.splice(noteIndex, 1);
         }
       } else {
-        synth.triggerRelease();
+        if (!note) return;
+
+        const noteIndex = currentNotesPressed.findIndex((n) => n === note.name);
+        if (noteIndex !== -1) {
+          // synth.triggerRelease(note.name);
+          synth.triggerRelease();
+          currentNotesPressed.splice(noteIndex, 1);
+        }
       }
     }
   };

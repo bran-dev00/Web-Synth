@@ -1,9 +1,9 @@
 import * as Tone from "tone";
-import { Note, SynthType } from "../types/types";
+import { Note, SynthTypes } from "../types/types";
 
 const currentNotesPressed: string[] = [];
 
-export const playNote = (synth: SynthType, note: Note) => {
+export const playNote = (synth: SynthTypes, note: Note) => {
   if (synth) {
     if (currentNotesPressed.includes(note.name)) return;
     currentNotesPressed.push(note.name);
@@ -11,7 +11,7 @@ export const playNote = (synth: SynthType, note: Note) => {
   }
 };
 
-export const stopNote = (synth: SynthType, note: Note) => {
+export const stopNote = (synth: SynthTypes, note: Note) => {
   if (synth) {
     if (!note) return;
 

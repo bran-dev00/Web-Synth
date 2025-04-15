@@ -4,56 +4,8 @@ import { useState, useContext } from "react";
 import { SynthContext } from "@/contexts/SynthContext";
 
 const SynthSelect = () => {
-  // const synth = useContext(SynthContext);
-  // const [currentSynth, setCurrentSynth] = useState<string | null>("PolySynth");
-  const { synthRef, changeSynth } = useContext(SynthContext);
-  const [currSelected, setCurrSelected] = useState<string | null>("polySynth");
-
-  // const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selectedSynth = e.target.value;
-  //   switch (selectedSynth) {
-  //     case "polySynth":
-  //       synth?.dispose();
-  //       synth = new Tone.PolySynth().toDestination();
-  //       setCurrSelected("polySynth");
-  //       break;
-  //     case "amSynth":
-  //       synth?.dispose();
-  //       synth = new Tone.AMSynth().toDestination();
-  //       setCurrSelected("amSynth");
-  //       break;
-  //     case "fmSynth":
-  //       synth?.dispose();
-  //       synth = new Tone.FMSynth().toDestination();
-  //       setCurrSelected("fmSynth");
-  //       break;
-  //     case "duoSynth":
-  //       synth?.dispose();
-  //       synth = new Tone.DuoSynth().toDestination();
-  //       setCurrSelected("duoSynth");
-  //       break;
-  //     case "monoSynth":
-  //       synth?.dispose();
-  //       synth = new Tone.MonoSynth().toDestination();
-  //       setCurrSelected("monoSynth");
-  //       break;
-  //     case "synth":
-  //       synth?.dispose();
-  //       synth = new Tone.Synth().toDestination();
-  //       setCurrSelected("synth");
-  //       break;
-  //     case "metalSynth":
-  //       synth?.dispose();
-  //       synth = new Tone.MetalSynth().toDestination();
-  //       setCurrSelected("metalSynth");
-  //       break;
-  //     default:
-  //       synth?.dispose();
-  //       synth = new Tone.PolySynth().toDestination();
-  //       setCurrSelected("polySynth");
-  //       break;
-  //   }
-  // };
+  const { changeSynth } = useContext(SynthContext);
+  // const [currSelected, setCurrSelected] = useState<string | null>(null);
 
   return (
     <div>
@@ -67,10 +19,10 @@ const SynthSelect = () => {
             id="selectSynth"
             onChange={(e) => {
               const selectedSynth = e.target.value;
-              setCurrSelected(selectedSynth);
+              // setCurrSelected(selectedSynth);
               changeSynth(selectedSynth);
               console.log("Selected Synth: ", selectedSynth);
-              console.log(synthRef?.current?.name);
+              // console.log(synthRef?.current?.name);
             }}
           >
             <option value="Synth">Synth</option>
@@ -80,10 +32,12 @@ const SynthSelect = () => {
             <option value="DuoSynth">Duo Synth</option>
             <option value="MonoSynth">Mono Synth</option>
             <option value="MetalSynth">Metal Synth</option>
+            <option value="MembraneSynth">Membrane Synth</option>
+            <option value="PluckSynth">Pluck Synth</option>
+            <option value="NoiseSynth">Noise Synth</option>
           </select>
         </label>
 
-        <p>{currSelected}</p>
         <button
           type="submit"
           onSubmit={() => {
