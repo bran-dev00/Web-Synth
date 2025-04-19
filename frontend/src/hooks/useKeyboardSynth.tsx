@@ -1,114 +1,89 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, createContext, useContext } from "react";
 import * as Tone from "tone";
-import { Note } from "../types/types";
+import { Note, SynthTypes } from "../types/types";
+import { keyNoteMap } from "@/utils/utils";
+import { SynthContext } from "@/contexts/SynthContext";
 
-interface UseKeyboardSynth {
-  synthRef: React.RefObject<Tone.PolySynth | null>;
-  playNote: (note: Note) => void;
-}
+// const keyNoteMap = new Map<string, Note>([
+//   ["a", { name: "C3", duration: "8n" }],
+//   ["w", { name: "C#3", duration: "8n" }],
+//   ["s", { name: "D3", duration: "8n" }],
+//   ["e", { name: "D#3", duration: "8n" }],
+//   ["d", { name: "E3", duration: "8n" }],
+//   ["f", { name: "F3", duration: "8n" }],
+//   ["t", { name: "F#3", duration: "8n" }],
+//   ["g", { name: "G3", duration: "8n" }],
+//   ["y", { name: "G#3", duration: "8n" }],
+//   ["h", { name: "A3", duration: "8n" }],
+//   ["u", { name: "A#3", duration: "8n" }],
+//   ["j", { name: "B3", duration: "8n" }],
+//   ["k", { name: "C4", duration: "8n" }],
+//   ["o", { name: "C#4", duration: "8n" }],
+//   ["l", { name: "D4", duration: "8n" }],
+//   ["p", { name: "D#4", duration: "8n" }],
+//   [";", { name: "E4", duration: "8n" }],
+// ]);
 
-const currentNotesPressed: string[] = [];
-
-const keyNoteMap = new Map<string, Note>([
-  ["a", { name: "C2", duration: "8n" }],
-  ["w", { name: "C#2", duration: "8n" }],
-  ["s", { name: "D2", duration: "8n" }],
-  ["e", { name: "D#2", duration: "8n" }],
-  ["d", { name: "E2", duration: "8n" }],
-  ["f", { name: "F2", duration: "8n" }],
-  ["t", { name: "F#2", duration: "8n" }],
-  ["g", { name: "G2", duration: "8n" }],
-  ["y", { name: "G#2", duration: "8n" }],
-  ["h", { name: "A2", duration: "8n" }],
-  ["u", { name: "A#2", duration: "8n" }],
-  ["j", { name: "B2", duration: "8n" }],
-  ["k", { name: "C3", duration: "8n" }],
-  ["o", { name: "C#3", duration: "8n" }],
-  ["l", { name: "D3", duration: "8n" }],
-  ["p", { name: "D#3", duration: "8n" }],
-  [";", { name: "E3", duration: "8n" }],
-]);
-
-const playNote = (synthRef: Tone.PolySynth | null, note: Note) => {
+const handleKeyDown = (
+  e: KeyboardEvent,
+  synthRef: SynthTypes | null,
+  playNote: (synthRef: SynthTypes, note: Note) => void
+) => {
   if (synthRef) {
-    if (currentNotesPressed.includes(note.name)) {
-      // console.log("Note already pressed");
-      return;
-    } else {
-      currentNotesPressed.push(note.name);
-      synthRef.triggerAttack(note.name, note.duration);
+    const note = keyNoteMap.get(e.key.toLowerCase());
+    if (note) {
+      playNote(synthRef, note);
     }
   }
 };
 
-const handleKeyDown = (e: KeyboardEvent, synthRef: Tone.PolySynth | null) => {
+const handleKeyUp = (
+  e: KeyboardEvent,
+  synthRef: SynthTypes | null,
+  releaseNote: (synthRef: SynthTypes, note: Note) => void
+) => {
   if (synthRef) {
-    playNote(synthRef, keyNoteMap.get(e.key.toLowerCase()) as Note);
+    const note = keyNoteMap.get(e.key.toLowerCase());
+
+    if (note) {
+      releaseNote(synthRef, note);
+    }
   }
 };
 
-const handleKeyUp = (e: KeyboardEvent, synthRef: Tone.PolySynth | null) => {
-  if (synthRef) {
-    if (currentNotesPressed.length === 0) {
-      return;
-    }
-
-    const Note = keyNoteMap.get(e.key.toLowerCase());
-
-    if (!Note) {
-      console.log("Note not found");
-      return;
-    }
-
-    const noteIndex = currentNotesPressed.findIndex(
-      (note) => note === Note.name
-    );
-    if (noteIndex === -1) {
-      console.log("Note not found in current notes pressed");
-      return;
-    } else {
-      // Remove the note from the array
-      synthRef.triggerRelease(currentNotesPressed[noteIndex]);
-      currentNotesPressed.splice(noteIndex, 1);
-    }
-
-    // currentNotesPressed.splice(noteIndex, 1);
-    // console.log(currentNotesPressed);
-  }
-};
-
-const useKeyboardSynth = (): UseKeyboardSynth => {
-  const synthRef = useRef<Tone.PolySynth | null>(null);
+export const useKeyboardSynth = () => {
+  const { synthRef, playNote, releaseNote } = useContext(SynthContext);
+  // const synthRef = useRef<SynthTypes | null>(null);
 
   useEffect(() => {
-    Tone.start();
-    synthRef.current = new Tone.PolySynth().toDestination();
-
-    if (!synthRef.current) {
+    //TODO: later change the event listener to a specific component
+    if (!synthRef?.current) {
       console.error("SynthRef is null");
     } else {
       window.addEventListener("keydown", (e) => {
-        handleKeyDown(e, synthRef.current);
+        handleKeyDown(e, synthRef?.current, playNote);
       });
 
-      window.addEventListener("keyup", (e) => handleKeyUp(e, synthRef.current));
+      window.addEventListener("keyup", (e) =>
+        handleKeyUp(e, synthRef?.current, releaseNote)
+      );
     }
 
     //Cleanup function to remove event listeners and dispose of the synth
     return () => {
-      synthRef.current?.dispose();
+      synthRef?.current?.dispose();
       window.removeEventListener("keydown", (e) =>
-        handleKeyDown(e, synthRef.current)
+        handleKeyDown(e, synthRef?.current, playNote)
       );
       window.removeEventListener("keyup", (e) =>
-        handleKeyUp(e, synthRef.current)
+        handleKeyUp(e, synthRef?.current, releaseNote)
       );
     };
   }, []);
 
   return {
-    synthRef: synthRef,
-    playNote: (note: Note) => playNote(synthRef?.current, note),
+    handleKeyDown,
+    handleKeyUp,
   };
 };
 

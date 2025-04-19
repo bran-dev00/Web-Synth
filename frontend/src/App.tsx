@@ -1,27 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import * as Tone from "tone";
 import "./App.css";
 import useKeyboardSynth from "./hooks/useKeyboardSynth";
 
 import { Slider } from "@/components/ui/slider";
-
-interface Note {
-  name: string;
-  duration: string;
-}
+import { SynthContext } from "@/contexts/SynthContext";
+import { SynthTypes, Note } from "@/types/types";
+import SynthSelect from "@/components/Synth/SynthSelect";
 
 function App() {
-  const { synthRef, playNote } = useKeyboardSynth();
+  // const { synthRef, playNote } = useKeyboardSynth();
+
+  const {
+    synthRef,
+    currentSynthType,
+    playNote,
+    releaseNote,
+    triggerAttackRelease,
+  } = useContext(SynthContext);
+
+  //keyboard mapping handling
+  useKeyboardSynth();
 
   const [sliderValue, setSliderValue] = useState([40]);
   const [currSynthName, setCurrSynthName] = useState(synthRef?.current?.name);
 
   useEffect(() => {
     setCurrSynthName(synthRef?.current?.name);
-  }, [synthRef]);
-
-  //Empty array to store the current notes pressed, when a key is held down add it to the array,
-  // When a key is released remove it from the array
+  }, [synthRef?.current]);
 
   const notes: Note[] = [
     { name: "C2", duration: "8n" },
@@ -51,11 +57,21 @@ function App() {
     <button
       key={note.name}
       // onClick={() => handleToggle(note)}
-      onMouseDown={() =>
-        synthRef?.current?.triggerAttack(note.name, note.duration)
-      }
-      onMouseUp={() => synthRef?.current?.triggerRelease(note.name)}
-      onMouseLeave={() => synthRef?.current?.triggerRelease(note.name)}
+      onMouseDown={() => {
+        if (synthRef?.current) {
+          playNote(synthRef.current, note);
+        }
+      }}
+      onMouseUp={() => {
+        if (synthRef?.current) {
+          releaseNote(synthRef.current, note);
+        }
+      }}
+      onMouseLeave={() => {
+        if (synthRef?.current) {
+          releaseNote(synthRef.current, note);
+        }
+      }}
     >
       {note.name}
     </button>
@@ -64,11 +80,14 @@ function App() {
   return (
     <>
       <h1>Current Synth: {currSynthName}</h1>
+      <div>
+        <SynthSelect />
+      </div>
 
       <div className="card">
         <button
           onMouseDown={() => {
-            synthRef?.current?.triggerAttack("C4", "8n");
+            synthRef?.current?.triggerAttackRelease("C4", "8n");
           }}
           onMouseUp={() => synthRef?.current?.triggerRelease("C4")}
         >
@@ -95,7 +114,7 @@ function App() {
           width={"200px"}
           defaultValue={[40]}
           value={sliderValue}
-          onValueChange={(e) => setSliderValue(e.value)}
+          onValueChange={(e: EventTarget) => setSliderValue(e.value)}
         ></Slider>
 
         <p>{sliderValue}</p>
