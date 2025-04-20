@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { SynthContext } from "@/contexts/SynthContext";
 import { SynthTypes, Note } from "@/types/types";
 import SynthSelect from "@/components/Synth/SynthSelect";
+import SynthSettings from "@/components/Synth/SynthSettings";
 
 function App() {
   // const { synthRef, playNote } = useKeyboardSynth();
@@ -119,7 +120,9 @@ function App() {
 
         <p>{sliderValue}</p>
       </div>
-
+      <div>
+        <SynthSettings />
+      </div>
       <div>
         {/* <ul>
           <li>
