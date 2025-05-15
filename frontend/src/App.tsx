@@ -6,8 +6,10 @@ import useKeyboardSynth from "./hooks/useKeyboardSynth";
 import { Slider } from "@/components/ui/slider";
 import { SynthContext } from "@/contexts/SynthContext";
 import { SynthTypes, Note } from "@/types/types";
-import SynthSelect from "@/components/Synth/SynthSelect";
-import SynthSettings from "@/components/Synth/SynthSettings";
+import SynthSelect from "@/components/synth/SynthSelect";
+import SynthSettings from "@/components/synth/SynthSettings";
+import Playground from "@/components/playground/Playground";
+import DebugPanel from "@/components/playground/DebugPanel";
 
 function App() {
   // const { synthRef, playNote } = useKeyboardSynth();
@@ -77,7 +79,7 @@ function App() {
       {note.name}
     </button>
   ));
-
+  const [debugStatus, setDebugStatus] = useState<boolean>(true);
   return (
     <>
       <h1>Current Synth: {currSynthName}</h1>
@@ -120,25 +122,12 @@ function App() {
 
         <p>{sliderValue}</p>
       </div>
-      <div>
-        <SynthSettings />
-      </div>
-      <div>
-        {/* <ul>
-          <li>
-            <p>{synthRef.current?.name}</p>
-          </li>
-          <li>
-            <p>{synthRef.current?.name}</p>
-          </li>
-          <li>
-            <p>{synth.output.toString()}</p>
-          </li>
-          <li>
-            <p>{synth.volume.value.toString()}</p>
-          </li>
-        </ul> */}
-      </div>
+      {/* <SynthSettings /> */}
+      {debugStatus && (
+        <>
+          <Playground />
+        </>
+      )}
     </>
   );
 }
