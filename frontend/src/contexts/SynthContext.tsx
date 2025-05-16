@@ -2,20 +2,6 @@ import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
 import { SynthTypes, Note } from "../types/types";
 import { useKeyboardSynth } from "@/hooks/useKeyboardSynth";
-// synthtypes
-
-{
-  /* 
-  SynthTypes = "AMSynth" | "FMSynth" | "PolySynth" | "MonoSynth" |
-  "MembraneSynth" | "PluckSynth" | "NoiseSynth" | "MetalSynth" | "DuoSynth";
-
-  Tone.Synth, Tone.AmSynth, Tone.FMSynth, Tone.PolySynth,
-  Tone.MonoSynth, Tone.MembraneSynth, Tone.PluckSynth, Tone.NoiseSynth,
-  Tone.MetalSynth, Tone.DuoSynth
-     
-
-  */
-}
 
 export interface SynthContextType {
   synthRef: React.RefObject<SynthTypes | null> | null;
@@ -45,7 +31,7 @@ interface SynthProviderProps {
 export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   const synthRef = useRef<SynthTypes | null>(null);
   const [currentSynthType, setCurrentSynthType] = useState<string>(
-    synthRef.current?.name || ""
+    synthRef.current?.name || "",
   );
   const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
 

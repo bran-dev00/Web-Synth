@@ -21,6 +21,26 @@ export const noteNames = [
 
 export const noteOctaves = [2, 3, 4, 5, 6, 7];
 
+export const getNotesByOctave = (start: number, end: number) => {
+  if (start < 2 || end > 6) {
+    return console.error("octave is out of bounds");
+  }
+
+  //loop through note names and append the octave number
+
+  const notes: Note[] = [];
+
+  noteNames.forEach((note) => {
+    const newNote = { name: note.concat(start.toString()), duration: "8n" };
+    notes.push(newNote);
+    console.log(newNote.name);
+  });
+
+  return notes;
+};
+
+getNotesByOctave(2, 3);
+
 export const keyNoteMap = new Map<string, Note>([
   ["a", { name: "C4", duration: "8n" }],
   ["w", { name: "C#4", duration: "8n" }],
