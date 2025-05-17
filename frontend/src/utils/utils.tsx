@@ -23,7 +23,7 @@ export const noteOctaves = [2, 3, 4, 5, 6, 7];
 
 export const getNotesByOctave = (start: number, end: number) => {
   if (start < 2 || end > 6) {
-    return console.error("octave is out of bounds");
+    console.error("octave is out of bounds");
   }
 
   //loop through note names and append the octave number

@@ -21,11 +21,6 @@ const Key: React.FC<KeyProps> = ({
   isActive,
   keyType,
 }) => {
-  const keyStyle = {
-    backgroundColor: keyType === "white" ? "white" : "black",
-    color: keyType == "white" ? "black" : "white",
-  };
-
   return (
     <>
       <div className="key">
@@ -33,7 +28,7 @@ const Key: React.FC<KeyProps> = ({
           onMouseDown={onKeyPress}
           onMouseUp={onKeyRelease}
           onMouseLeave={onKeyRelease}
-          style={keyStyle}
+          className={keyType == "white" ? "white-key" : "black-key"}
         >
           {note.name}
         </button>

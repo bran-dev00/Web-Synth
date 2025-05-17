@@ -1,6 +1,6 @@
 import Key from "./Key.tsx";
 import { SynthContext } from "@/contexts/SynthContext.tsx";
-import { useEffect, useRef, useContext } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { Container, Flex } from "@chakra-ui/react";
 import { Note } from "@/types/types";
 import { getNotesByOctave } from "@/utils/utils.tsx";
@@ -12,9 +12,11 @@ interface KeyboardLayoutProps {
 
 const KeyboardLayout = () => {
   const { synthRef, playNote, releaseNote } = useContext(SynthContext);
-  const n1: Note = { name: "D4" };
+  //TODO: Dragging Functionality
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [lastDraggedNote, setLastDraggedNote] = useState<string | null>(null);
 
-  const octave = getNotesByOctave(2, 3);
+  const octave: Note[] = getNotesByOctave(4, 5);
 
   const handleMouseDown = (note: Note) => {
     if (synthRef?.current) {
@@ -38,18 +40,19 @@ const KeyboardLayout = () => {
       <h1>Keyboard</h1>
       <Container>
         <Flex direction={"row"}>
+          {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
           {octave.map((note: Note) => {
             return (
               <Key
                 isActive={true}
                 onKeyRelease={() => handleMouseUp(note)}
                 onKeyPress={() => handleMouseDown(note)}
+                //This might need to be changed if I decide to add frequency instead of just note names
                 keyType={note.name.includes("#") ? "black" : "white"}
                 note={note}
               />
             );
           })}
-
           {/* <Key */}
           {/*   isActive={true} */}
           {/*   onKeyRelease={() => handleMouseUp(n1)} */}

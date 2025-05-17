@@ -2,6 +2,7 @@ import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
 import { SynthTypes, Note } from "../types/types";
 import { useKeyboardSynth } from "@/hooks/useKeyboardSynth";
+// synthtypes
 
 export interface SynthContextType {
   synthRef: React.RefObject<SynthTypes | null> | null;
