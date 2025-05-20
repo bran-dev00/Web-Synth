@@ -33,7 +33,7 @@ export const getNotesByOctave = (start: number, end: number) => {
   noteNames.forEach((note) => {
     const newNote = { name: note.concat(start.toString()), duration: "8n" };
     notes.push(newNote);
-    console.log(newNote.name);
+    // console.log(newNote.name);
   });
 
   return notes;

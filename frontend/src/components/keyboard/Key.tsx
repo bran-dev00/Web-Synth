@@ -1,4 +1,5 @@
 import { Note, SynthTypes } from "../../types/types";
+import { useRef } from "react";
 import "./Key.css";
 
 interface KeyProps {
@@ -6,31 +7,37 @@ interface KeyProps {
   isActive: boolean;
 
   //Event Handlers
-  onKeyPress: (note: Note) => void;
-  onKeyRelease: (note: Note) => void;
+  onMouseDown: () => void;
+  onMouseUp: () => void;
+  onMouseLeave: () => void;
+  onMouseDrag: () => void;
 
   keyType: "white" | "black";
-  label?: string; // Optional Label on the key
+  label?: boolean; // Optional Label on the key
 }
 
-// Hardcoded to only polysynth for now
 const Key: React.FC<KeyProps> = ({
-  onKeyRelease,
-  onKeyPress,
+  onMouseDown,
+  onMouseUp,
+  onMouseDrag,
+  onMouseLeave,
   note,
-  isActive,
   keyType,
+  label,
 }) => {
+  // const keyRef = useRef(null);
+
   return (
     <>
       <div className="key">
         <button
-          onMouseDown={onKeyPress}
-          onMouseUp={onKeyRelease}
-          onMouseLeave={onKeyRelease}
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseLeave}
+          onMouseEnter={onMouseDrag}
           className={keyType == "white" ? "white-key" : "black-key"}
         >
-          {note.name}
+          {label && note.name}
         </button>
       </div>
     </>
