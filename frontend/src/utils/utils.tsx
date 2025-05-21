@@ -2,7 +2,7 @@ import { Note } from "../types/types";
 
 const notes: Note = [{ name: "C2", duration: "8n" }];
 
-// C,C#,D,D#,E,E#,F,F#,G,G#,A,A#,B,B#
+// C,C#,D,D#,E,E#,F,F#,G,G#,A,A#,B,
 export const noteNames = [
   "C",
   "C#",
@@ -16,7 +16,6 @@ export const noteNames = [
   "A",
   "A#",
   "B",
-  "B#",
 ];
 
 export const noteOctaves = [2, 3, 4, 5, 6, 7];
