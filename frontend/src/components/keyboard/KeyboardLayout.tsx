@@ -2,32 +2,38 @@ import Key from "./Key.tsx";
 import { SynthContext } from "@/contexts/SynthContext.tsx";
 import { useEffect, useRef, useState, useContext } from "react";
 import { Container, Flex, Center } from "@chakra-ui/react";
-import { Note } from "@/types/types";
-import { getNotesByOctave } from "@/utils/utils.tsx";
+import { Note, OctaveGroup } from "@/types/types";
+import {
+  getNotesByOctave,
+  getOctaveGroups,
+  getBlackKeyOffset,
+} from "@/utils/utils.tsx";
 
 interface KeyboardLayoutProps {
   startingOctave: number;
   endingOctave: number;
 }
 
-const KeyboardLayout = () => {
+const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
+  startingOctave = 2,
+  endingOctave = 4,
+}) => {
   const { synthRef, playNote, releaseNote } = useContext(SynthContext);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  // const [isMouseDownGlobally, setIsMouseDownGlobally] =
-  // useState<boolean>(false);
 
-  const octave: Note[] = getNotesByOctave(3, 5);
+  const octaveGroups: OctaveGroup[] = getOctaveGroups(
+    startingOctave,
+    endingOctave,
+  );
 
-  const whiteKeys = octave.filter((n) => !n.name.includes("#"));
-  const blackKeys = octave.filter((n) => n.name.includes("#"));
+  //flatten all octaves
+  const allWhiteKeys = octaveGroups.flatMap((group) => group.whiteKeys);
+  const allBlackKeys = octaveGroups.flatMap((group) => group.blackKeys);
 
-  //Handle Global Mouse Up Release Note
-  // const handleGlobalMouseUp = () => {};
-  // useEffect(() => {
-  //   window.addEventListener("mouseup");
-  // }, []);
-  //
+  console.log("blackKeys: ", allBlackKeys);
+  console.log("octaveGroups", octaveGroups);
+
   const handleMouseDown = (note: Note) => {
     if (synthRef?.current) {
       setIsDragging(true);
@@ -62,24 +68,6 @@ const KeyboardLayout = () => {
     }
   };
 
-  //TODO: Place Notes in 2 octaves
-  // How do we do this?  [C3,C#3D,E,F,G,A,B,C,D,E,F,G,A,B,C2]
-  // write a function getNotesByOctave(startOctave, endingOctave)  => returns an array or an object of notes.
-
-  //Black Key Offset
-  const getBlackKeyOffset = (noteName: string, whiteKeyNoteNames: string[]) => {
-    const whiteKeyWidth = 50;
-    const blackKeyOffset = whiteKeyWidth - 15;
-
-    const noteLetter = noteName[0];
-    //find matching note
-    const index = whiteKeyNoteNames.findIndex((whiteKeyNote) =>
-      whiteKeyNote.startsWith(noteLetter),
-    );
-
-    return index * whiteKeyWidth + blackKeyOffset;
-  };
-
   return (
     <div>
       <h1>Keyboard</h1>
@@ -88,62 +76,48 @@ const KeyboardLayout = () => {
           <Flex position={"relative"} direction={"row"}>
             {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
 
-            {whiteKeys.map((note: Note) => {
-              return (
-                <Key
-                  key={note.name}
-                  isActive={true}
-                  onMouseUp={() => handleMouseUp(note)}
-                  onMouseDown={() => handleMouseDown(note)}
-                  onMouseDrag={() => handleMouseDragging(note)}
-                  onMouseLeave={() => handleMouseLeave(note)}
-                  keyType={note.name.includes("#") ? "black" : "white"}
-                  note={note}
-                  label={true}
-                />
-              );
-            })}
+            {allWhiteKeys.map((note: Note) => (
+              <Key
+                key={note.name}
+                isActive={true}
+                onMouseUp={() => handleMouseUp(note)}
+                onMouseDown={() => handleMouseDown(note)}
+                onMouseDrag={() => handleMouseDragging(note)}
+                onMouseLeave={() => handleMouseLeave(note)}
+                keyType="white"
+                note={note}
+                label={true}
+              />
+            ))}
 
-            {blackKeys.map((note: Note) => {
-              const left = getBlackKeyOffset(
-                note.name,
-                whiteKeys.map((n) => n.name),
-              );
-              return (
-                <div
-                  key={note.name}
-                  style={{ position: "absolute", left: `${left}px`, zIndex: 2 }}
-                >
-                  <Key
-                    isActive={true}
-                    onMouseUp={() => handleMouseUp(note)}
-                    onMouseDown={() => handleMouseDown(note)}
-                    onMouseDrag={() => handleMouseDragging(note)}
-                    onMouseLeave={() => handleMouseLeave(note)}
-                    keyType={note.name.includes("#") ? "black" : "white"}
-                    note={note}
-                    label={true}
-                  />
-                </div>
-              );
-            })}
+            {/* Render black keys with proper positioning */}
+            {octaveGroups.map((octaveGroup, octaveIndex) =>
+              octaveGroup.blackKeys.map((note: Note) => {
+                const left = getBlackKeyOffset(note.name, 50, octaveIndex);
 
-            {/* {octave.map((note: Note) => { */}
-            {/*   return ( */}
-            {/*     <Key */}
-            {/*       key={note.name} */}
-            {/*       isActive={true} */}
-            {/*       onMouseUp={() => handleMouseUp(note)} */}
-            {/*       onMouseDown={() => handleMouseDown(note)} */}
-            {/*       onMouseDrag={() => handleMouseDragging(note)} */}
-            {/*       onMouseLeave={() => handleMouseLeave(note)} */}
-            {/*       //This might need to be changed if I decide to add frequency instead of just note names */}
-            {/*       keyType={note.name.includes("#") ? "black" : "white"} */}
-            {/*       note={note} */}
-            {/*       label={false} */}
-            {/*     /> */}
-            {/*   ); */}
-            {/* })} */}
+                return (
+                  <div
+                    key={note.name}
+                    style={{
+                      position: "absolute",
+                      left: `${left}px`,
+                      zIndex: 2,
+                    }}
+                  >
+                    <Key
+                      isActive={true}
+                      onMouseUp={() => handleMouseUp(note)}
+                      onMouseDown={() => handleMouseDown(note)}
+                      onMouseDrag={() => handleMouseDragging(note)}
+                      onMouseLeave={() => handleMouseLeave(note)}
+                      keyType="black"
+                      note={note}
+                      label={true}
+                    />
+                  </div>
+                );
+              }),
+            )}
           </Flex>
         </Center>
       </Container>
