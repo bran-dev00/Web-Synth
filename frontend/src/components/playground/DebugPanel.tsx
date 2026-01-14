@@ -1,17 +1,12 @@
-import { Container, Code, Box } from "@chakra-ui/react";
-
+import styles from "./DebugPanel.module.css"
 interface DebugPanelProps {
   data: any;
 }
 
 const DebugPanel: React.FC<DebugPanelProps> = ({ data }) => {
   return (
-    <div>
-      <Container>
-        <Box>
-          <Code>{JSON.stringify(data)}</Code>
-        </Box>
-      </Container>
+    <div className="container">
+          <div className={styles["debug-panel"]}>{JSON.stringify(data)}</div>
     </div>
   );
 };

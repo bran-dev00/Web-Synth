@@ -3,11 +3,10 @@ import * as Tone from "tone";
 import "./App.css";
 import useKeyboardSynth from "./hooks/useKeyboardSynth";
 
-import { Slider } from "@/components/ui/slider";
 import { SynthContext } from "@/contexts/SynthContext";
 import { SynthTypes, Note } from "@/types/types";
-import SynthSelect from "@/components/synth/SynthSelect";
-import SynthSettings from "@/components/synth/SynthSettings";
+// import SynthSelect from "@/components/synth/SynthSelect";
+// import SynthSettings from "@/components/synth/SynthSettings";
 import Playground from "@/components/playground/Playground";
 import DebugPanel from "@/components/playground/DebugPanel";
 
@@ -25,7 +24,7 @@ function App() {
   //keyboard mapping handling
   useKeyboardSynth();
 
-  const [sliderValue, setSliderValue] = useState([40]);
+  // const [sliderValue, setSliderValue] = useState([40]);
   const [currSynthName, setCurrSynthName] = useState(synthRef?.current?.name);
 
   useEffect(() => {
@@ -84,7 +83,7 @@ function App() {
     <>
       <h1>Current Synth: {currSynthName}</h1>
       <div>
-        <SynthSelect />
+        {/* <SynthSelect /> */}
       </div>
 
       <div className="card">
@@ -111,18 +110,6 @@ function App() {
 
       <div>{listNotes}</div>
 
-      <div>
-        <Slider
-          label="Frequency Slider"
-          width={"200px"}
-          defaultValue={[40]}
-          value={sliderValue}
-          onValueChange={(e: EventTarget) => setSliderValue(e.value)}
-        ></Slider>
-
-        <p>{sliderValue}</p>
-      </div>
-      {/* <SynthSettings /> */}
       {debugStatus && (
         <>
           <Playground />

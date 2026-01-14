@@ -1,0 +1,14 @@
+.debug-panel{
+    background-color: #132c38;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    font-family: monospace;
+    text-align: center;
+}
+

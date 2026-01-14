@@ -1,8 +1,8 @@
 import Key from "./Key.tsx";
+import styles from "./Keyboard.module.css"
 import { SynthContext } from "@/contexts/SynthContext.tsx";
 import { useEffect, useRef, useState, useContext } from "react";
-import { Container, Flex, Center } from "@chakra-ui/react";
-import { Note, OctaveGroup } from "@/types/types";
+import { Note } from "@/types/types";
 import {
   getNotesByOctave,
   getOctaveGroups,
@@ -10,19 +10,19 @@ import {
 } from "@/utils/utils.tsx";
 
 interface KeyboardLayoutProps {
-  startingOctave: number;
-  endingOctave: number;
+  startingOctave?: number;
+  endingOctave?: number;
 }
 
 const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
   startingOctave = 2,
-  endingOctave = 4,
+  endingOctave = 5,
 }) => {
   const { synthRef, playNote, releaseNote } = useContext(SynthContext);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const octaveGroups: OctaveGroup[] = getOctaveGroups(
+  const octaveGroups = getOctaveGroups(
     startingOctave,
     endingOctave,
   );
@@ -69,11 +69,9 @@ const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
   };
 
   return (
-    <div>
+    <div className="">
       <h1>Keyboard</h1>
-      <Container style={{ border: "1px white solid" }}>
-        <Center>
-          <Flex position={"relative"} direction={"row"}>
+      <div className={`${styles["keyboard-layout"]} `}>
             {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
 
             {allWhiteKeys.map((note: Note) => (
@@ -118,9 +116,7 @@ const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
                 );
               }),
             )}
-          </Flex>
-        </Center>
-      </Container>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,9 @@
-import { Container, Box, Flex } from "@chakra-ui/react";
 import DebugPanel from "./DebugPanel";
 import { Note } from "@/types/types";
 
 import Key from "@/components/keyboard/Key";
 import KeyboardLayout from "@/components/keyboard/KeyboardLayout";
+import styles from "./Playground.module.css"
 
 const Playground = () => {
   const note: Note = { name: "A4" };
@@ -17,10 +17,9 @@ const Playground = () => {
 
   return (
     <div>
-      <Container>
+      <div className={styles["playground-container"]}>
         <h1>Playground</h1>
-        <Flex>
-          <Box>
+        {/* <div>
             <Key
               onKeyPress={playNote}
               onKeyRelease={stopNote}
@@ -35,13 +34,14 @@ const Playground = () => {
               isActive={true}
               keyType={"black"}
             />
-          </Box>
-        </Flex>
+       </div> */}
+       <div>
         <KeyboardLayout />
-        <Box>
+       </div>
+        <div >
           <DebugPanel data={{ name: "hello" }} />
-        </Box>
-      </Container>
+        </div>
+      </div>
     </div>
   );
 };

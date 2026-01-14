@@ -1,6 +1,6 @@
 import { Note, SynthTypes } from "../../types/types";
 import { useRef } from "react";
-import "./Key.css";
+import styles from "./Key.module.css";
 
 interface KeyProps {
   note: Note;
@@ -29,15 +29,15 @@ const Key: React.FC<KeyProps> = ({
 
   return (
     <>
-      <div className="key">
+      <div className={styles["key"]}>
         <button
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
           onMouseEnter={onMouseDrag}
-          className={keyType == "white" ? "white-key" : "black-key"}
+          className={keyType === "white" ? styles["white-key"] : styles["black-key"]}
         >
-          {label && note.name}
+          {label && <span className={keyType === "white" ? styles["label-bottom"] : styles["label-center"]}>{note.name}</span>}
         </button>
       </div>
     </>

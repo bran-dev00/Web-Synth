@@ -1,74 +1,61 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext } from "react";
 import { SynthContext } from "@/contexts/SynthContext";
-import { SynthTypes } from "@/types/types";
-import { Envelope } from "tone";
-import * as Tone from "tone";
-import { ul } from "framer-motion/m";
-
-interface SynthSettingTypes extends Tone.SynthOptions {
-  volume: number;
-  envelope: any;
-  portamento: number;
-}
-interface synthSettingsProps {
-  [key: string]: any;
-}
+import { useSynthSettings } from "@/hooks/useSynthSettings";
 
 const SynthSettings = () => {
   const { synthRef } = useContext(SynthContext);
-  const synth: SynthTypes | null = synthRef?.current;
+  const { settings, updateSetting, resetToDefaults } = useSynthSettings(synthRef?.current);
 
-  const env = new Tone.AmplitudeEnvelope({
-    attack: 0.1,
-    decay: 0.2,
-    sustain: 1.0,
-    release: 0.8,
-  });
-  const settings: SynthSettingTypes = {
-    volume: synth?.volume.value,
-    envelope: synth?.envelope | null | undefined,
-  };
-  const testSettings = {
-    ...synth?.get(),
-  };
+  if (!settings) return null;
 
-  const RenderSynthSettings: React.FC<synthSettingsProps> = ({ data }) => {
-    return (
-      <ul>
-        {Object.entries(data).map(([key, value]) => (
-          <li key={key}>
-            <strong>{key}:</strong>{" "}
-            {typeof value === "object" && value !== null
-              ? JSON.stringify(value) // Or recursively render if needed
-              : value}
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
-  if (synth) {
-    synth.debug = true;
-    {
-      /* console.log(synth.get());
-       */
-    }
-    {
-      /*
-     if (synth?.envelope) {
-      console.log("envelope: ", synth?.envelope);
-    }
-
-    */
-    }
-  }
-
-  console.log("TEST", testSettings);
-  // List of synth settings: volume, envelope properties
   return (
-    <div>
-      <h1>Synth Settings</h1>
-      <RenderSynthSettings data={testSettings} />
+    <div className="synth-settings">
+      <h2>Synth Settings</h2>
+      
+      {/* Volume Control */}
+      <div className="setting-group">
+        <h3>Volume</h3>
+              </div>
+
+      {/* Envelope Controls */}
+      {settings.envelope && (
+        <div className="setting-group">
+          <h3>Envelope</h3>
+          <div className="envelope-controls">
+            <div>
+              <label>Attack</label>
+                          </div>
+            <div>
+              <label>Decay</label>
+              
+            </div>
+            <div>
+              <label>Sustain</label>
+            </div>
+            <div>
+              <label>Release</label>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Oscillator Controls */}
+      {settings.oscillator && (
+        <div className="setting-group">
+          <h3>Oscillator</h3>
+          <select
+            value={settings.oscillator.type}
+            onChange={(e) => updateSetting('oscillator.type', e.target.value)}
+          >
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="triangle">Triangle</option>
+          </select>
+        </div>
+      )}
+
+      <button onClick={resetToDefaults}>Reset to Defaults</button>
     </div>
   );
 };
