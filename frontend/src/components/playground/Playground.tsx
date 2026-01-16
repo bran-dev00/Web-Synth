@@ -1,9 +1,10 @@
 import DebugPanel from "./DebugPanel";
 import { Note } from "@/types/types";
 
-import Key from "@/components/keyboard/Key";
-import KeyboardLayout from "@/components/keyboard/KeyboardLayout";
+import Key from "@/components/pianoKeyboard/Key";
+import PianoKeyboardLayout from "@/components/pianoKeyboard/PianoKeyboardLayout";
 import styles from "./Playground.module.css"
+import SynthSelect from "../Synth/SynthSelect";
 
 const Playground = () => {
   const note: Note = { name: "A4" };
@@ -35,8 +36,10 @@ const Playground = () => {
               keyType={"black"}
             />
        </div> */}
+
        <div>
-        <KeyboardLayout />
+        <SynthSelect/>
+        <PianoKeyboardLayout />
        </div>
         <div >
           <DebugPanel data={{ name: "hello" }} />

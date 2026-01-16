@@ -1,10 +1,8 @@
 import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
 import { SynthTypes, Note } from "../types/types";
-import { useKeyboardSynth } from "@/hooks/useKeyboardSynth";
-// synthtypes
 
-export interface SynthContextType {
+export type SynthContextType = {
   synthRef: React.RefObject<SynthTypes | null> | null;
   currentSynthType: string;
   isPolyphonic: boolean;
@@ -25,21 +23,29 @@ export const SynthContext = createContext<SynthContextType>({
   triggerAttackRelease: () => {},
 });
 
-interface SynthProviderProps {
+type SynthProviderProps = {
   children: React.ReactNode;
 }
 
+
 export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   const synthRef = useRef<SynthTypes | null>(null);
+ 
   const [currentSynthType, setCurrentSynthType] = useState<string>(
     synthRef.current?.name || "",
   );
-  const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
 
+  const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
+  const currentNotesPressed = useRef<string[]>([]);
+
+  //Initialize synthRef on load/initial render
   useEffect(() => {
     Tone.start();
-    synthRef.current = new Tone.Synth().toDestination();
+    const initialSynth = new Tone.Synth().toDestination();
+    synthRef.current = initialSynth;
+    setCurrentSynthType(synthRef.current.name);
 
+    //Clean up
     return () => {
       if (synthRef?.current) {
         synthRef.current.dispose();
@@ -106,43 +112,35 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     }
   };
 
-  const currentNotesPressed: string[] = [];
 
+  //TODO: Note-Duration Parameters
   const playNote = (synth: SynthTypes, note: Note) => {
-    if (synth) {
-      if (synth.name == "PolySynth") {
-        if (currentNotesPressed.includes(note.name)) return;
-        currentNotesPressed.push(note.name);
-        synth.triggerAttack(note.name);
-      } else {
-        if (currentNotesPressed.includes(note.name)) return;
-        currentNotesPressed.push(note.name);
-        synth.triggerAttack(note.name);
-      }
-    }
+    if(!synth || !note) return
+
+    //prevents duplicate notes
+    if(currentNotesPressed.current.includes(note.name)) return;
+
+    currentNotesPressed.current.push(note.name);
+    synth.triggerAttack(note.name);
   };
 
-  const stopNote = (synth: SynthTypes, note: Note) => {
-    if (synth) {
-      if (synth.name == "PolySynth") {
-        if (!note) return;
+  const releaseNote = (synth: SynthTypes, note: Note) => {
+    //Do nothing 
+    if(!synth || !note) return;
+    
+    const noteIndex = currentNotesPressed.current.findIndex((n) => n === note.name);
+    if (noteIndex === -1) return; // Note not found in pressed notes
 
-        const noteIndex = currentNotesPressed.findIndex((n) => n === note.name);
-        if (noteIndex !== -1) {
-          synth.triggerRelease(note.name);
-          currentNotesPressed.splice(noteIndex, 1);
-        }
-      } else {
-        if (!note) return;
-
-        const noteIndex = currentNotesPressed.findIndex((n) => n === note.name);
-        if (noteIndex !== -1) {
-          // synth.triggerRelease(note.name);
-          synth.triggerRelease();
-          currentNotesPressed.splice(noteIndex, 1);
-        }
-      }
+    // PolySynth needs note name, others don't
+    if (synth.name === "PolySynth") {
+      (synth as Tone.PolySynth).triggerRelease(note.name);
+    } else {
+      // Monophonic synths can call triggerRelease without arguments
+      // @ts-expect-error - TypeScript doesn't narrow the union properly, but this is safe at runtime
+      synth.triggerRelease();
     }
+
+    currentNotesPressed.current.splice(noteIndex, 1);
   };
 
   const triggerAttackRelease = (synth: SynthTypes, note: Note) => {
@@ -151,13 +149,14 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     }
   };
 
+  //Create the synthValue object that will be passed as the Context's value with everything initialized
   const synthValue: SynthContextType = {
     synthRef: synthRef,
     currentSynthType: currentSynthType,
     isPolyphonic: isPolyphonic,
     changeSynth: changeSynth,
     playNote: playNote,
-    releaseNote: stopNote,
+    releaseNote: releaseNote,
     triggerAttackRelease: triggerAttackRelease,
   };
 
@@ -165,5 +164,4 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     <SynthContext.Provider value={synthValue}>{children}</SynthContext.Provider>
   );
 };
-
 export default SynthProvider;

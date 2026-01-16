@@ -1,20 +1,20 @@
 import Key from "./Key.tsx";
-import styles from "./Keyboard.module.css"
+import styles from "./PianoKeyboard.module.css"
 import { SynthContext } from "@/contexts/SynthContext.tsx";
 import { useEffect, useRef, useState, useContext } from "react";
 import { Note } from "@/types/types";
 import {
-  getNotesByOctave,
   getOctaveGroups,
   getBlackKeyOffset,
 } from "@/utils/utils.tsx";
 
-interface KeyboardLayoutProps {
+interface PianoKeyboardLayoutProps {
   startingOctave?: number;
   endingOctave?: number;
 }
 
-const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
+//Handles the 'piano keyboard' rendering and IO keyboard & mouse events 
+const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   startingOctave = 2,
   endingOctave = 5,
 }) => {
@@ -31,8 +31,8 @@ const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
   const allWhiteKeys = octaveGroups.flatMap((group) => group.whiteKeys);
   const allBlackKeys = octaveGroups.flatMap((group) => group.blackKeys);
 
-  console.log("blackKeys: ", allBlackKeys);
-  console.log("octaveGroups", octaveGroups);
+  // console.log("blackKeys: ", allBlackKeys);
+  // console.log("octaveGroups", octaveGroups);
 
   const handleMouseDown = (note: Note) => {
     if (synthRef?.current) {
@@ -71,7 +71,7 @@ const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
   return (
     <div className="">
       <h1>Keyboard</h1>
-      <div className={`${styles["keyboard-layout"]} `}>
+      <div className={`${styles["piano-keyboard-layout"]} `}>
             {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
 
             {allWhiteKeys.map((note: Note) => (
@@ -121,4 +121,4 @@ const KeyboardLayout: React.FC<KeyboardLayoutProps> = ({
   );
 };
 
-export default KeyboardLayout;
+export default PianoKeyboardLayout;

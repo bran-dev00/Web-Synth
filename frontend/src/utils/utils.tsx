@@ -1,4 +1,4 @@
-import { Note, OctaveGroup } from "../types/types";
+import { Note } from "../types/types";
 
 export const noteNames = [
   "C",
@@ -49,16 +49,17 @@ export const getNotesByOctave = (start: number, end: number): Note[] => {
   }
 
   // console.log(notes);
+
   return notes;
 };
 
-export const getOctaveGroups = (start: number, end: number): OctaveGroup[] => {
+export const getOctaveGroups = (start: number, end: number) => {
   if (start < 2 || end > 6) {
     console.error("octaves out of bounds");
     return [];
   }
 
-  const octaveGroups: OctaveGroup = [];
+  const octaveGroups = [];
 
   for (let octave = start; octave <= end; octave++) {
     const allNotes: Note[] = [];
@@ -103,7 +104,7 @@ export const getBlackKeyOffset = (
   const noteName = blackKeyNote.replace(/\d+$/, "");
 
   const whiteKeyPosition = blackKeyPositions.get(noteName);
-  console.log("whiteKeyPosition: ", whiteKeyPosition);
+  // console.log("whiteKeyPosition: ", whiteKeyPosition);
 
   if (whiteKeyPosition === undefined) {
     console.error(`Invalid black Key: ${blackKeyNote}`);
