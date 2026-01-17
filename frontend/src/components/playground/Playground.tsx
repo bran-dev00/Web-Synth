@@ -1,20 +1,107 @@
 import DebugPanel from "./DebugPanel";
-import { Note } from "@/types/types";
+import { Note, PolyCompatibleSynth } from "@/types/types";
+
+import { useContext, useEffect, useState } from "react";
+import { SynthContext } from "@/contexts/SynthContext";
 
 import Key from "@/components/pianoKeyboard/Key";
 import PianoKeyboardLayout from "@/components/pianoKeyboard/PianoKeyboardLayout";
 import styles from "./Playground.module.css"
 import SynthSelect from "../Synth/SynthSelect";
 
+import {createPolySynth} from "../../utils/utils"
+
+import * as Tone from "tone";
+
+
 const Playground = () => {
-  const note: Note = { name: "A4" };
-  const note2: Note = { name: "B4" };
-  const playNote = () => {
-    console.log("play note");
-  };
-  const stopNote = () => {
-    console.log("stop note");
-  };
+
+  let testData = {data : "Test Data"};
+
+  const {
+    synthRef,
+    changeSynth,
+  } = useContext(SynthContext);
+
+
+  const [isPolyphonicToggled, setIsPolyphonicToggled] = useState(false);
+  const [baseName, setBaseName] = useState(synthRef?.current?.name);
+
+  useEffect(() =>{
+    if(synthRef?.current){
+      setBaseName(synthRef?.current.name);
+    }
+  },[changeSynth])
+  
+  const togglePolyphony = () =>{
+    //Revert back to normal
+    if(isPolyphonicToggled){
+      if(baseName){
+        changeSynth(baseName);
+        setIsPolyphonicToggled(false);
+        return;
+      }
+    }
+
+    if (!synthRef?.current) return;
+
+    const currentSynth = synthRef.current;
+    const synthName = currentSynth.name;
+    
+    // Save baseName before converting to polyphonic
+    if (!baseName || synthName !== "PolySynth") {
+      setBaseName(synthName);
+    }
+    
+    // Map instance name to constructor for poly-compatible synths
+    let synthConstructor: PolyCompatibleSynth | null = null;
+
+    if (synthName === "Synth") {
+      synthConstructor = Tone.Synth;
+    } else if (synthName === "AMSynth") {
+      synthConstructor = Tone.AMSynth;
+    } else if (synthName === "FMSynth") {
+      synthConstructor = Tone.FMSynth;
+    } else if (synthName === "MonoSynth") {
+      synthConstructor = Tone.MonoSynth;
+    }
+
+    if (!synthConstructor) {
+      console.warn(`Synth type ${synthName} is not poly-compatible`);
+      return;
+    }
+
+    currentSynth.dispose();
+    const polySynth = createPolySynth(synthConstructor);
+    synthRef.current = polySynth.toDestination();
+
+    setIsPolyphonicToggled(true);
+  }
+
+
+  //How to make an instrument?
+
+
+  //Add Chorus 
+  const addChorus = () =>{
+    if(!synthRef?.current) return;
+
+    const chorus = new Tone.Chorus();
+    chorus.toDestination();
+
+    synthRef.current.connect(chorus);
+
+  }
+
+  const removeChorus = (chorus: Tone.Chorus) =>{
+    if(!synthRef?.current) return;
+
+    synthRef.current.disconnect()
+
+
+  }
+
+
 
   return (
     <div>
@@ -39,10 +126,23 @@ const Playground = () => {
 
        <div>
         <SynthSelect/>
+
+        <p>Base name: {baseName ?? "Null"}</p>
+        <button onClick={() => togglePolyphony()}>
+          toggle polyphonic
+        </button>
+        <div>
+          {isPolyphonicToggled ? "ON" : "OFF" }
+        </div>
+
+        <div>
+          {/* {synthRef?.current?.name} */}
+        </div>
+
         <PianoKeyboardLayout />
        </div>
         <div >
-          <DebugPanel data={{ name: "hello" }} />
+          <DebugPanel data={{data: `${synthRef?.current?.get()}`, name: baseName}} />
         </div>
       </div>
     </div>

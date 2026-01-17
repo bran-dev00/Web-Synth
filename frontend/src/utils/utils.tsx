@@ -1,4 +1,7 @@
-import { Note } from "../types/types";
+import { Monophonic } from "tone/build/esm/instrument/Monophonic";
+import { Note,PolyCompatibleSynth } from "../types/types";
+import * as Tone from "tone";
+import { Instrument } from "tone/build/esm/instrument/Instrument";
 
 export const noteNames = [
   "C",
@@ -137,3 +140,27 @@ export const keyNoteMap = new Map<string, Note>([
   ["p", { name: "D#5", duration: "8n" }],
   [";", { name: "E5", duration: "8n" }],
 ]);
+
+
+// Check if instrument/synth is Monophonic
+// const isMonophonic = (instrument: Instrument): boolean =>{
+
+//   Monophonic.getDefaults();
+  
+
+// }
+
+// //Create PolySynth
+ /*
+    PolySynth is not a synthesizer by itself, 
+    it merely manages voices of one of the other types of synths,
+    allowing any of the monophonic synthesizers to be polyphonic.
+    - Tonejs Docs
+  */
+export const createPolySynth = (instrument : PolyCompatibleSynth ) =>{
+
+  const polySynth = new Tone.PolySynth(instrument).toDestination();
+
+  return polySynth;
+
+}

@@ -6,23 +6,21 @@ export interface Note {
 }
 
 export type SynthTypes =
-  | Tone.MonoSynth
   | Tone.AMSynth
-  | Tone.FMSynth
   | Tone.DuoSynth
-  | Tone.Sampler
-  | Tone.NoiseSynth
+  | Tone.FMSynth
   | Tone.MembraneSynth
-  | Tone.PluckSynth
-  | Tone.Synth
   | Tone.MetalSynth
-  | Tone.PolySynth;
+  | Tone.MonoSynth
+  | Tone.NoiseSynth
+  | Tone.PluckSynth
+  | Tone.PolySynth
+  | Tone.Sampler
+  | Tone.Synth;
 
-export type polySynthOptions =
-  | { options: Tone.PolySynthOptions<Tone.AMSynth> }
-  | { options: Tone.PolySynthOptions<Tone.FMSynth> }
-  | { options: Tone.PolySynthOptions<Tone.DuoSynth> }
-  | { options: Tone.PolySynthOptions<Tone.MembraneSynth> }
-  | { options: Tone.PolySynthOptions<Tone.PluckSynth> }
-  | { options: Tone.PolySynthOptions<Tone.Synth> }
-  | { options: Tone.PolySynthOptions<Tone.MetalSynth> };
+
+export type PolyCompatibleSynth =
+| typeof Tone.Synth
+| typeof Tone.AMSynth
+| typeof Tone.FMSynth
+| typeof Tone.MonoSynth;

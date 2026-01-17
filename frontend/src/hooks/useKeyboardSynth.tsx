@@ -1,4 +1,4 @@
-import { useEffect, useRef, createContext, useContext } from "react";
+import { useEffect, useContext } from "react";
 // import * as Tone from "tone";
 import { Note, SynthTypes } from "../types/types";
 import { keyNoteMap } from "@/utils/utils";

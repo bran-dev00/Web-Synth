@@ -1,22 +1,29 @@
 import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
-import { SynthTypes, Note } from "../types/types";
+import { SynthTypes, Note} from "../types/types";
+
+
+//Keep track of effects with an effects array
 
 export type SynthContextType = {
   synthRef: React.RefObject<SynthTypes | null> | null;
   currentSynthType: string;
   isPolyphonic: boolean;
+  effects:[];
 
   changeSynth: (newSynth: string) => void;
   playNote: (synth: SynthTypes, note: Note) => void;
   releaseNote: (synth: SynthTypes, note: Note) => void;
   triggerAttackRelease: (synth: SynthTypes, note: Note) => void;
+  
 }
+
 
 export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
   currentSynthType: "",
   isPolyphonic: false,
+  effects: [],
   changeSynth: () => {},
   playNote: () => {},
   releaseNote: () => {},
@@ -35,6 +42,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     synthRef.current?.name || "",
   );
 
+ 
   const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
   const currentNotesPressed = useRef<string[]>([]);
 
@@ -42,6 +50,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   useEffect(() => {
     Tone.start();
     const initialSynth = new Tone.Synth().toDestination();
+
     synthRef.current = initialSynth;
     setCurrentSynthType(synthRef.current.name);
 
@@ -58,28 +67,33 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
       synthRef?.current.dispose();
 
       switch (newSynth) {
-        case "AMSynth":
+        case "Synth":
           setIsPolyphonic(false);
+          setCurrentSynthType("Synth");
+          synthRef.current = new Tone.Synth().toDestination();
+          break;
+        case "AMSynth":
+          setIsPolyphonic(true);
           setCurrentSynthType("AMSynth");
           synthRef.current = new Tone.AMSynth().toDestination();
           break;
         case "FMSynth":
-          setIsPolyphonic(false);
+          setIsPolyphonic(true);
           setCurrentSynthType("FMSynth");
           synthRef.current = new Tone.FMSynth().toDestination();
           break;
         case "PolySynth":
           setIsPolyphonic(true);
           setCurrentSynthType("PolySynth");
-          synthRef.current = new Tone.PolySynth(Tone.FMSynth).toDestination();
+          synthRef.current = new Tone.PolySynth(Tone.AMSynth).toDestination();
           break;
         case "MonoSynth":
-          setIsPolyphonic(false);
+          setIsPolyphonic(true);
           setCurrentSynthType("MonoSynth");
           synthRef.current = new Tone.MonoSynth().toDestination();
           break;
         case "MembraneSynth":
-          setIsPolyphonic(false);
+          setIsPolyphonic(true);
           setCurrentSynthType("MembraneSynth");
           synthRef.current = new Tone.MembraneSynth().toDestination();
           break;
@@ -105,8 +119,8 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
           break;
         default:
           setIsPolyphonic(false);
-          setCurrentSynthType("AMSynth");
-          synthRef.current = new Tone.AMSynth().toDestination();
+          setCurrentSynthType("Synth");
+          synthRef.current = new Tone.Synth().toDestination();
           break;
       }
     }
