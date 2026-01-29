@@ -1,5 +1,5 @@
 import DebugPanel from "./DebugPanel";
-import { Note, PolyCompatibleSynth } from "@/types/types";
+import { Note,EffectType ,PolyCompatibleSynth } from "@/types/types";
 
 import { useContext, useEffect, useState } from "react";
 import { SynthContext } from "@/contexts/SynthContext";
@@ -8,6 +8,7 @@ import Key from "@/components/pianoKeyboard/Key";
 import PianoKeyboardLayout from "@/components/pianoKeyboard/PianoKeyboardLayout";
 import styles from "./Playground.module.css"
 import SynthSelect from "../Synth/SynthSelect";
+import {EffectRack} from "../effectRack/EffectRack"
 
 import {createPolySynth} from "../../utils/utils"
 
@@ -21,6 +22,7 @@ const Playground = () => {
   const {
     synthRef,
     changeSynth,
+    effects,
   } = useContext(SynthContext);
 
 
@@ -82,24 +84,40 @@ const Playground = () => {
   //How to make an instrument?
 
 
-  //Add Chorus 
-  const addChorus = () =>{
-    if(!synthRef?.current) return;
+  // //Add Chorus 
+  // const addChorus = () =>{
+  //   if(!synthRef?.current) return;
 
-    const chorus = new Tone.Chorus();
-    chorus.toDestination();
+  //   const chorus = new Tone.Chorus();
+  //   chorus.toDestination();
 
-    synthRef.current.connect(chorus);
+  //   synthRef.current.connect(chorus);
 
-  }
+  //   const effect: EffectType = {
+  //     instance: chorus,
+  //     name: "Chorus"
+  //   }
+  //   console.log(effects);
+  //   //Add the effect to the effects array
+  //   effects.set(effect.name, effect);
+  //   console.log(effects)
+  // }
 
-  const removeChorus = (chorus: Tone.Chorus) =>{
-    if(!synthRef?.current) return;
+  // const removeChorus = () =>{
+  //   if(!synthRef?.current) return;
 
-    synthRef.current.disconnect()
+  //   if (effects){
+  //     if(effects.has("Chorus")){
+  //       console.log("Remove Chorus", effects);
 
+  //       const chorus = effects.get("Chorus");
+  //       chorus?.instance.disconnect();
+  //       effects.delete("Chorus");
+  //       return;
+  //     }
+  //   }
 
-  }
+  // }
 
 
 
@@ -134,6 +152,8 @@ const Playground = () => {
         <div>
           {isPolyphonicToggled ? "ON" : "OFF" }
         </div>
+
+        <EffectRack/>
 
         <div>
           {/* {synthRef?.current?.name} */}

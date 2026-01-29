@@ -1,16 +1,16 @@
 import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
-import { SynthTypes, Note} from "../types/types";
+import { SynthTypes, Note, EffectType,EffectTypeName, EffectInstance, SynthRef} from "../types/types";
 
-
-//Keep track of effects with an effects array
+//TODO -> Handle Effects Updates
 
 export type SynthContextType = {
-  synthRef: React.RefObject<SynthTypes | null> | null;
+  synthRef: SynthRef;
   currentSynthType: string;
   isPolyphonic: boolean;
-  effects:[];
+  effects: Map<EffectTypeName, EffectType[]>;
 
+  setEffects:React.Dispatch<React.SetStateAction<Map<EffectTypeName, EffectType[]>>>;
   changeSynth: (newSynth: string) => void;
   playNote: (synth: SynthTypes, note: Note) => void;
   releaseNote: (synth: SynthTypes, note: Note) => void;
@@ -23,7 +23,9 @@ export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
   currentSynthType: "",
   isPolyphonic: false,
-  effects: [],
+  effects: new Map<EffectTypeName, EffectType[]>(), 
+
+  setEffects: () =>{},
   changeSynth: () => {},
   playNote: () => {},
   releaseNote: () => {},
@@ -45,6 +47,15 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
  
   const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
   const currentNotesPressed = useRef<string[]>([]);
+
+
+  const [effects, setEffects] = useState<Map<EffectTypeName, EffectType[]>>(
+    new Map<EffectTypeName, EffectType[]>()
+  );
+
+
+
+  // const effects = new Map<EffectTypeName, EffectType[]>();
 
   //Initialize synthRef on load/initial render
   useEffect(() => {
@@ -168,6 +179,9 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     synthRef: synthRef,
     currentSynthType: currentSynthType,
     isPolyphonic: isPolyphonic,
+    effects: effects,
+
+    setEffects: setEffects,
     changeSynth: changeSynth,
     playNote: playNote,
     releaseNote: releaseNote,
