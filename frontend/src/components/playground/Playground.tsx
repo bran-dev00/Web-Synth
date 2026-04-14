@@ -1,5 +1,5 @@
 import DebugPanel from "./DebugPanel";
-import { Note,EffectType ,PolyCompatibleSynth } from "@/types/types";
+import { Note, EffectType, PolyCompatibleSynth } from "@/types/types";
 
 import { useContext, useEffect, useState } from "react";
 import { SynthContext } from "@/contexts/SynthContext";
@@ -7,17 +7,17 @@ import { SynthContext } from "@/contexts/SynthContext";
 import Key from "@/components/pianoKeyboard/Key";
 import PianoKeyboardLayout from "@/components/pianoKeyboard/PianoKeyboardLayout";
 import styles from "./Playground.module.css"
-import SynthSelect from "../Synth/SynthSelect";
-import {EffectRack} from "../effectRack/EffectRack"
+import SynthSelect from "../synth/SynthSelect";
+import { EffectRack } from "../effectRack/EffectRack"
 
-import {createPolySynth} from "../../utils/utils"
+import { createPolySynth } from "../../utils/utils"
 
 import * as Tone from "tone";
 
 
 const Playground = () => {
 
-  let testData = {data : "Test Data"};
+  let testData = { data: "Test Data" };
 
   const {
     synthRef,
@@ -29,16 +29,16 @@ const Playground = () => {
   const [isPolyphonicToggled, setIsPolyphonicToggled] = useState(false);
   const [baseName, setBaseName] = useState(synthRef?.current?.name);
 
-  useEffect(() =>{
-    if(synthRef?.current){
+  useEffect(() => {
+    if (synthRef?.current) {
       setBaseName(synthRef?.current.name);
     }
-  },[changeSynth])
-  
-  const togglePolyphony = () =>{
+  }, [changeSynth])
+
+  const togglePolyphony = () => {
     //Revert back to normal
-    if(isPolyphonicToggled){
-      if(baseName){
+    if (isPolyphonicToggled) {
+      if (baseName) {
         changeSynth(baseName);
         setIsPolyphonicToggled(false);
         return;
@@ -49,12 +49,12 @@ const Playground = () => {
 
     const currentSynth = synthRef.current;
     const synthName = currentSynth.name;
-    
+
     // Save baseName before converting to polyphonic
     if (!baseName || synthName !== "PolySynth") {
       setBaseName(synthName);
     }
-    
+
     // Map instance name to constructor for poly-compatible synths
     let synthConstructor: PolyCompatibleSynth | null = null;
 
@@ -142,27 +142,27 @@ const Playground = () => {
             />
        </div> */}
 
-       <div>
-        <SynthSelect/>
-
-        <p>Base name: {baseName ?? "Null"}</p>
-        <button onClick={() => togglePolyphony()}>
-          toggle polyphonic
-        </button>
         <div>
-          {isPolyphonicToggled ? "ON" : "OFF" }
+          <SynthSelect />
+
+          <p>Base name: {baseName ?? "Null"}</p>
+          <button onClick={() => togglePolyphony()}>
+            toggle polyphonic
+          </button>
+          <div>
+            {isPolyphonicToggled ? "ON" : "OFF"}
+          </div>
+
+          <EffectRack />
+
+          <div>
+            {/* {synthRef?.current?.name} */}
+          </div>
+
+          <PianoKeyboardLayout />
         </div>
-
-        <EffectRack/>
-
-        <div>
-          {/* {synthRef?.current?.name} */}
-        </div>
-
-        <PianoKeyboardLayout />
-       </div>
         <div >
-          <DebugPanel data={{data: `${synthRef?.current?.get()}`, name: baseName}} />
+          <DebugPanel data={{ data: `${synthRef?.current?.get()}`, name: baseName }} />
         </div>
       </div>
     </div>
