@@ -72,50 +72,50 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
     <div className="">
       <h1>Keyboard</h1>
       <div className={`${styles["piano-keyboard-layout"]} `}>
-            {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
+        {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
 
-            {allWhiteKeys.map((note: Note) => (
-              <Key
+        {allWhiteKeys.map((note: Note) => (
+          <Key
+            key={note.name}
+            isActive={true}
+            onMouseUp={() => handleMouseUp(note)}
+            onMouseDown={() => handleMouseDown(note)}
+            onMouseDrag={() => handleMouseDragging(note)}
+            onMouseLeave={() => handleMouseLeave(note)}
+            keyType="white"
+            note={note}
+            label={true}
+          />
+        ))}
+
+        {/* Render black keys with proper positioning */}
+        {octaveGroups.map((octaveGroup, octaveIndex) =>
+          octaveGroup.blackKeys.map((note: Note) => {
+            const left = getBlackKeyOffset(note.name, 50, octaveIndex);
+
+            return (
+              <div
                 key={note.name}
-                isActive={true}
-                onMouseUp={() => handleMouseUp(note)}
-                onMouseDown={() => handleMouseDown(note)}
-                onMouseDrag={() => handleMouseDragging(note)}
-                onMouseLeave={() => handleMouseLeave(note)}
-                keyType="white"
-                note={note}
-                label={true}
-              />
-            ))}
-
-            {/* Render black keys with proper positioning */}
-            {octaveGroups.map((octaveGroup, octaveIndex) =>
-              octaveGroup.blackKeys.map((note: Note) => {
-                const left = getBlackKeyOffset(note.name, 50, octaveIndex);
-
-                return (
-                  <div
-                    key={note.name}
-                    style={{
-                      position: "absolute",
-                      left: `${left}px`,
-                      zIndex: 2,
-                    }}
-                  >
-                    <Key
-                      isActive={true}
-                      onMouseUp={() => handleMouseUp(note)}
-                      onMouseDown={() => handleMouseDown(note)}
-                      onMouseDrag={() => handleMouseDragging(note)}
-                      onMouseLeave={() => handleMouseLeave(note)}
-                      keyType="black"
-                      note={note}
-                      label={true}
-                    />
-                  </div>
-                );
-              }),
-            )}
+                style={{
+                  position: "absolute",
+                  left: `${left}px`,
+                  zIndex: 2,
+                }}
+              >
+                <Key
+                  isActive={true}
+                  onMouseUp={() => handleMouseUp(note)}
+                  onMouseDown={() => handleMouseDown(note)}
+                  onMouseDrag={() => handleMouseDragging(note)}
+                  onMouseLeave={() => handleMouseLeave(note)}
+                  keyType="black"
+                  note={note}
+                  label={false}
+                />
+              </div>
+            );
+          }),
+        )}
       </div>
     </div>
   );
