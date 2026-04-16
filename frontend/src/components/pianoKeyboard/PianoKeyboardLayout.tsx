@@ -70,10 +70,8 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
 
   return (
     <div className="">
-      <h1>Keyboard</h1>
       <div className={`${styles["piano-keyboard-layout"]} `}>
         {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
-
         {allWhiteKeys.map((note: Note) => (
           <Key
             key={note.name}

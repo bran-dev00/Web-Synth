@@ -1,6 +1,6 @@
 import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
-import { SynthTypes, Note, EffectType,EffectTypeName, EffectInstance, SynthRef} from "../types/types";
+import { SynthInstance, Note, EffectType, EffectTypeName, EffectInstance, SynthRef } from "../types/types";
 
 //TODO -> Handle Effects Updates
 
@@ -10,12 +10,12 @@ export type SynthContextType = {
   isPolyphonic: boolean;
   effects: Map<EffectTypeName, EffectType[]>;
 
-  setEffects:React.Dispatch<React.SetStateAction<Map<EffectTypeName, EffectType[]>>>;
+  setEffects: React.Dispatch<React.SetStateAction<Map<EffectTypeName, EffectType[]>>>;
   changeSynth: (newSynth: string) => void;
-  playNote: (synth: SynthTypes, note: Note) => void;
-  releaseNote: (synth: SynthTypes, note: Note) => void;
-  triggerAttackRelease: (synth: SynthTypes, note: Note) => void;
-  
+  playNote: (synth: SynthInstance, note: Note) => void;
+  releaseNote: (synth: SynthInstance, note: Note) => void;
+  triggerAttackRelease: (synth: SynthInstance, note: Note) => void;
+
 }
 
 
@@ -23,13 +23,13 @@ export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
   currentSynthType: "",
   isPolyphonic: false,
-  effects: new Map<EffectTypeName, EffectType[]>(), 
+  effects: new Map<EffectTypeName, EffectType[]>(),
 
-  setEffects: () =>{},
-  changeSynth: () => {},
-  playNote: () => {},
-  releaseNote: () => {},
-  triggerAttackRelease: () => {},
+  setEffects: () => { },
+  changeSynth: () => { },
+  playNote: () => { },
+  releaseNote: () => { },
+  triggerAttackRelease: () => { },
 });
 
 type SynthProviderProps = {
@@ -38,13 +38,13 @@ type SynthProviderProps = {
 
 
 export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
-  const synthRef = useRef<SynthTypes | null>(null);
- 
+  const synthRef = useRef<SynthInstance | null>(null);
+
   const [currentSynthType, setCurrentSynthType] = useState<string>(
     synthRef.current?.name || "",
   );
 
- 
+
   const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
   const currentNotesPressed = useRef<string[]>([]);
 
@@ -139,20 +139,20 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
 
 
   //TODO: Note-Duration Parameters
-  const playNote = (synth: SynthTypes, note: Note) => {
-    if(!synth || !note) return
+  const playNote = (synth: SynthInstance, note: Note) => {
+    if (!synth || !note) return
 
     //prevents duplicate notes
-    if(currentNotesPressed.current.includes(note.name)) return;
+    if (currentNotesPressed.current.includes(note.name)) return;
 
     currentNotesPressed.current.push(note.name);
     synth.triggerAttack(note.name);
   };
 
-  const releaseNote = (synth: SynthTypes, note: Note) => {
+  const releaseNote = (synth: SynthInstance, note: Note) => {
     //Do nothing 
-    if(!synth || !note) return;
-    
+    if (!synth || !note) return;
+
     const noteIndex = currentNotesPressed.current.findIndex((n) => n === note.name);
     if (noteIndex === -1) return; // Note not found in pressed notes
 
@@ -168,7 +168,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     currentNotesPressed.current.splice(noteIndex, 1);
   };
 
-  const triggerAttackRelease = (synth: SynthTypes, note: Note) => {
+  const triggerAttackRelease = (synth: SynthInstance, note: Note) => {
     if (synth) {
       synth.triggerAttackRelease(note.name, "8n");
     }

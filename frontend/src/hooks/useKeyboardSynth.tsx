@@ -1,14 +1,14 @@
 import { useEffect, useContext } from "react";
 // import * as Tone from "tone";
-import { Note, SynthTypes } from "../types/types";
+import { Note, SynthInstance } from "../types/types";
 import { keyNoteMap } from "@/utils/utils";
 import { SynthContext } from "@/contexts/SynthContext";
 
 
 const handleKeyDown = (
   e: KeyboardEvent,
-  synthRef: SynthTypes | null | undefined,
-  playNote: (synthRef: SynthTypes, note: Note) => void
+  synthRef: SynthInstance | null | undefined,
+  playNote: (synthRef: SynthInstance, note: Note) => void
 ) => {
   if (synthRef) {
     const note = keyNoteMap.get(e.key.toLowerCase());
@@ -20,8 +20,8 @@ const handleKeyDown = (
 
 const handleKeyUp = (
   e: KeyboardEvent,
-  synthRef: SynthTypes | null | undefined,
-  releaseNote: (synthRef: SynthTypes, note: Note) => void
+  synthRef: SynthInstance | null | undefined,
+  releaseNote: (synthRef: SynthInstance, note: Note) => void
 ) => {
   if (synthRef) {
     const note = keyNoteMap.get(e.key.toLowerCase());
@@ -34,7 +34,7 @@ const handleKeyUp = (
 
 export const useKeyboardSynth = () => {
   const { synthRef, playNote, releaseNote } = useContext(SynthContext);
-  // const synthRef = useRef<SynthTypes | null>(null);
+  // const synthRef = useRef<SynthInstance | null>(null);
 
   useEffect(() => {
     //TODO: later change the event listener to a specific component

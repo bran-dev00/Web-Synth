@@ -1,4 +1,4 @@
-import { Note, SynthTypes } from "../../types/types";
+import { Note, SynthInstance } from "../../types/types";
 import { useRef } from "react";
 import styles from "./Key.module.css";
 

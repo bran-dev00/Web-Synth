@@ -4,11 +4,9 @@ import { Note, EffectType, PolyCompatibleSynth } from "@/types/types";
 import { useContext, useEffect, useState } from "react";
 import { SynthContext } from "@/contexts/SynthContext";
 
-import Key from "@/components/pianoKeyboard/Key";
 import PianoKeyboardLayout from "@/components/pianoKeyboard/PianoKeyboardLayout";
 import styles from "./Playground.module.css"
-import SynthSelect from "../synth/SynthSelect";
-import { EffectRack } from "../effectRack/EffectRack"
+import { EffectRack } from "../effects/effectsRack/EffectRack"
 
 import { createPolySynth } from "../../utils/utils"
 
@@ -16,13 +14,9 @@ import * as Tone from "tone";
 
 
 const Playground = () => {
-
-  let testData = { data: "Test Data" };
-
   const {
     synthRef,
     changeSynth,
-    effects,
   } = useContext(SynthContext);
 
 
@@ -143,7 +137,6 @@ const Playground = () => {
        </div> */}
 
         <div>
-          <SynthSelect />
 
           <p>Base name: {baseName ?? "Null"}</p>
           <button onClick={() => togglePolyphony()}>
@@ -153,7 +146,8 @@ const Playground = () => {
             {isPolyphonicToggled ? "ON" : "OFF"}
           </div>
 
-          <EffectRack />
+          {/* <EffectRack /> */}
+
 
           <div>
             {/* {synthRef?.current?.name} */}

@@ -5,34 +5,7 @@ export interface Note {
   duration?: Tone.Unit.Time;
 }
 
-export type SynthRef = React.RefObject<SynthTypes | null> | null;
-
-export type SynthTypes =
-  | Tone.AMSynth
-  | Tone.DuoSynth
-  | Tone.FMSynth
-  | Tone.MembraneSynth
-  | Tone.MetalSynth
-  | Tone.MonoSynth
-  | Tone.NoiseSynth
-  | Tone.PluckSynth
-  | Tone.PolySynth
-  | Tone.Sampler
-  | Tone.Synth;
-
-type DefaultSynths =
-  | Tone.AMSynth
-  | Tone.DuoSynth
-  | Tone.FMSynth
-  | Tone.MembraneSynth
-  | Tone.MetalSynth
-  | Tone.MonoSynth
-  | Tone.NoiseSynth
-  | Tone.PluckSynth
-  | Tone.PolySynth
-  | Tone.Sampler
-  | Tone.Synth;
-
+export type SynthRef = React.RefObject<SynthInstance | null> | null;
 
 export type SynthInstance = 
   | Tone.AMSynth
@@ -46,17 +19,6 @@ export type SynthInstance =
   | Tone.PolySynth
   | Tone.Sampler
   | Tone.Synth;
-
-// TODO: Synth Object
-/*
-  synth = {
-    id: number;
-    instance: SynthInstance
-    effects: Effect[]
-    settings?: object (tbd) / default
-  }
-
-*/
 
 
 export type PolyCompatibleSynth =
@@ -82,7 +44,12 @@ export type EffectType<T extends EffectTypeName = EffectTypeName> = {
   settings?: object
 };
 
-
+interface Envelope{
+  attack: number,
+  decay: number,
+  sustain: number,
+  release: number
+};
 
 export type EffectMap ={
   [K in EffectTypeName]: EffectType<K>[]
@@ -94,16 +61,6 @@ export type EffectTypeName =
   | "Distortion"
   | "Reverb"
   | "Phaser"
-
-
-//Effect settings
-
-// type BaseEffectSettings = {
-
-
-// }
-
-
 
 // Type Guards 
 

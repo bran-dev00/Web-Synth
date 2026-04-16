@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { SynthTypes } from "@/types/types";
+import { SynthInstance } from "@/types/types";
 
 interface VolumeSliderProps {
-  synth: SynthTypes | null | undefined;
+  synth: SynthInstance | null | undefined;
 }
 
 
@@ -28,7 +28,7 @@ const VolumeSlider: React.FC<VolumeSliderProps> = ({ synth }) => {
   return (
     <div>
       <h1>Volume Slider</h1>
-     
+
       <p>{volume}</p>
     </div>
   );

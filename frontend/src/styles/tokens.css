@@ -1,9 +1,11 @@
 :root{
-    --color-background: #1679a7;
+    --color-background: #14367e;
     --color-text: #fff;
     --color-primary: #116697;
     --color-secondary: #1679a7;
     --color-tertiary: #1679a7;
+    --color-sidebar-button: #14538d;
+    --color-sidebar-button-hover: #1e63a3;
 
     /* Typography */
     --font-size-base: 16px;

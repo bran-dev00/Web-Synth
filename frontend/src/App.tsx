@@ -1,14 +1,16 @@
 import { useEffect, useState, useContext } from "react";
 import * as Tone from "tone";
+import "./styles/layout.css"
 import "./App.css";
 import useKeyboardSynth from "./hooks/useKeyboardSynth";
-
+import SynthParameters from "./components/synth/SynthParameters"
 import { SynthContext } from "@/contexts/SynthContext";
-import { SynthTypes, Note } from "@/types/types";
-// import SynthSelect from "@/components/synth/SynthSelect";
-// import SynthSettings from "@/components/synth/SynthSettings";
+import Header from "./components/header/Header";
+import Sidebar from "./components/sidebar/Sidebar";
+
+import { SynthInstance, Note } from "@/types/types";
 import Playground from "@/components/playground/Playground";
-import DebugPanel from "@/components/playground/DebugPanel";
+import PianoKeyboardLayout from "./components/pianoKeyboard/PianoKeyboardLayout";
 
 function App() {
   const {
@@ -19,22 +21,28 @@ function App() {
   //keyboard IO handling
   useKeyboardSynth();
 
-  // const [sliderValue, setSliderValue] = useState([40]);
   const [currSynthName, setCurrSynthName] = useState(synthRef?.current?.name);
 
   useEffect(() => {
     setCurrSynthName(synthRef?.current?.name);
   }, [synthRef?.current]);
 
-  const [debugStatus, setDebugStatus] = useState<boolean>(true);
+  const [debugStatus, setDebugStatus] = useState<boolean>(false);
 
   return (
     <>
-      <h1>Current Synth: {currSynthName}</h1>
-      <div>
-        {/* <SynthSelect /> */}
-      </div>
+      <div className="main-container">
+        <header className="header">
+          <Header currSynth={currSynthName} />
+        </header>
+        <aside className="sidebar">
+          <Sidebar />
+        </aside>
 
+        <main className="main-content">
+          <PianoKeyboardLayout />
+        </main>
+      </div>
 
       {debugStatus && (
         <>
