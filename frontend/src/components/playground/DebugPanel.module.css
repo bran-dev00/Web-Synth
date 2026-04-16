@@ -1,6 +1,6 @@
 .debug-panel{
-    background-color: #132c38;
-    color: white;
+    background-color: var(--color-background);
+    color: var(--color-text);
     padding: 10px;
     border-radius: 5px;
     font-size: 14px;

@@ -16,7 +16,8 @@
 }
 
 .sidebar {
-    background-color: var(--color-primary);
+    background-color: var(--color-background);
+    border-right: 1px solid var(--color-primary);
     grid-area: sidebar;
     padding:2px;
 }

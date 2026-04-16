@@ -1,11 +1,31 @@
 :root{
-    --color-background: #14367e;
-    --color-text: #fff;
-    --color-primary: #116697;
-    --color-secondary: #1679a7;
-    --color-tertiary: #1679a7;
-    --color-sidebar-button: #14538d;
-    --color-sidebar-button-hover: #1e63a3;
+    --color-background: #0f172a;
+    --color-surface: #1e293b;
+    --color-surface-light: #334155;
+    --color-text: #f1f5f9;
+    --color-text-secondary: #cbd5e1;
+    
+    --color-primary: #1e40af;
+    --color-primary-light: #3b82f6;
+    --color-primary-dark: #1e3a8a;
+    
+    --color-secondary: #0c4a6e;
+    --color-tertiary: #075985;
+    
+    /* Sidebar */
+    --color-sidebar-button: #2b4391;
+    --color-sidebar-button-hover: #3b82f6;
+    
+    /* Accent Colors - Teal */
+    --color-accent: #0891b2;
+    --color-accent-light: #67e8f9;
+    --color-accent-dark: #0e7490;
+    
+    /* Other */
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-border: #334155;
 
     /* Typography */
     --font-size-base: 16px;
