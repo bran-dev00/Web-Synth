@@ -1,19 +1,19 @@
-
-// Effect Details
-
 import { EffectType } from "@/types/types";
+import styles from "./EffectModule.module.css"
 
 interface EffectModuleProps {
     effect: EffectType
 }
 
-const EffectModule = (props: EffectModuleProps) =>{
+const EffectModule = (props: EffectModuleProps) => {
     const effect = props.effect;
 
+    //Effect Parameters
     return (
         <>
-            <div>
+            <div className={styles["container"]}>
                 <h3>Name:{effect.effectTypeName} </h3>
+
                 <button>Remove</button>
             </div>
         </>

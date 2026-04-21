@@ -24,7 +24,12 @@
 
 .main-content {
     grid-area: main;
-    display: flex;
+    display: grid;
+    grid-template-areas:
+    "effects effects"
+    "piano piano";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-4);

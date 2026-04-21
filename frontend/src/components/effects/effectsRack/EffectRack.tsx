@@ -1,18 +1,26 @@
-import { useAudioEffects } from "@/hooks/useAudioEffects";
-import { EffectTypeName } from "@/types/types";
-import EffectModule from "../EffectModule";
-import { useEffect, useState } from "react";
+import styles from "./EffectRack.module.css"
+import { SynthContext } from "@/contexts/SynthContext";
+import AddEffectModal from "../addEffectModal/AddEffectModal";
 
-const EffectRack = () => {
+import { useEffect, useState, useContext } from "react";
+
+const EffectsRack = () => {
+    const { effects } = useContext(SynthContext);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
 
     return (
-        <>
-            <div>
-                <h1>Effect Rack</h1>
+        <div className={styles["container"]}>
+            <button onClick={() => setIsModalOpen(true)}>Add Effect</button>
+
+            <AddEffectModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+            <div className={styles["modules"]}>
 
             </div>
-        </>
+        </div>
     );
 };
 
-export { EffectRack }
+export default EffectsRack 

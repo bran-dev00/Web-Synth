@@ -6,7 +6,6 @@ const Header = () => {
 
     const { changeSynth } = useContext(SynthContext);
 
-
     return (
         <header className={styles["container"]}>
             <h1>Web Synth</h1>

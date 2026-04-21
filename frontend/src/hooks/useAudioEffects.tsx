@@ -3,15 +3,10 @@ import * as Tone from "tone";
 import { SynthContext } from "@/contexts/SynthContext";
 import { useContext, useCallback } from "react";
 
-/**
- * Custom hook for managing audio effects on the synth
- */
-export const useAudioEffects = () => {
-  const { synthRef, effects,setEffects } = useContext(SynthContext);
 
-  /**
-   * Creates a new effect instance based on the effect name
-   */
+export const useAudioEffects = () => {
+  const { synthRef, effects, setEffects } = useContext(SynthContext);
+
   const createEffectInstance = useCallback((effectName: EffectTypeName): EffectInstance | null => {
     switch (effectName) {
       case "Chorus":
@@ -29,9 +24,6 @@ export const useAudioEffects = () => {
     }
   }, []);
 
-  /**
-   * Adds an effect to the synth's effect chain
-   */
   const addEffect = useCallback((effectName: EffectTypeName, nickname?: string, settings?: object) => {
     try {
       if (!synthRef?.current) {
@@ -93,9 +85,6 @@ export const useAudioEffects = () => {
     }
   }, [synthRef, effects, createEffectInstance]);
 
-  /**
-   * Removes an effect from the synth's effect chain
-   */
   const removeEffect = useCallback((effectName: EffectTypeName, id: number) => {
     try {
       if (!effects) {
@@ -121,7 +110,7 @@ export const useAudioEffects = () => {
       }
 
       const effectToRemove = effectArray[effectIndex];
-      
+
       // Dispose of the effect instance
       effectToRemove.instance.disconnect();
       effectToRemove.instance.dispose();
@@ -147,12 +136,12 @@ export const useAudioEffects = () => {
     }
   }, [synthRef, effects]);
 
-  const getActiveEffects = useCallback(() =>{
-    if(effects){
+  const getActiveEffects = useCallback(() => {
+    if (effects) {
       console.log(effects);
       return effects;
     }
-  },[synthRef, effects]);
+  }, [synthRef, effects]);
 
 
   return {
