@@ -1,15 +1,15 @@
 import styles from "./AddEffectModal.module.css"
 
-const AddEffectModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
-    if (!open) return null;
-
+const AddEffectModal = ({ dialogRef, closeDialog }: { dialogRef: React.Ref<HTMLDialogElement>, closeDialog: () => void }) => {
     return (
-        <div className={styles["overlay"]} onClick={onClose}>
-            <div className={styles["modal"]} onClick={(e) => e.stopPropagation()}>
+        <dialog ref={dialogRef} className={styles["overlay"]}>
+            <div className={styles["content"]} onClick={(e) => e.stopPropagation()}>
                 <h3>Add Effect</h3>
-                <button onClick={onClose}>Close</button>
+
+
+                <button onClick={closeDialog}>Close</button>
             </div>
-        </div>
+        </dialog>
     )
 }
 
