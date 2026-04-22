@@ -3,11 +3,48 @@
     padding: 1.5rem;
     border-radius: 8px;
     min-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:4px;
+}
+
+button:hover{
+    cursor:pointer;
+    background-color: var(--color-primary);
+}
+
+.close-button{
+    background-color: var(--color-background);
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    padding:8px;
+    margin-bottom: 1rem;
+}
+
+.buttons-wrapper{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap:2px;
+}
+
+.effect-button{
+    background-color: var(--color-background);
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    padding:8px;
+    margin:2px;
+}
+
+.effect-button:hover{
+    background-color: var(--color-primary);
+    cursor:pointer;
 }
 
 :modal{
-  position: absolute;
-  border-radius: 3px;
-  height:80vh;
-  width: 80vw;
+  border-radius: 8px;
+  border:none;
+  /* height:80vh; */
+  /* width: 80vw; */
 }

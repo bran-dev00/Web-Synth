@@ -1,11 +1,14 @@
 import styles from "./EffectRack.module.css"
 import { SynthContext } from "@/contexts/SynthContext";
 import AddEffectModal from "../addEffectModal/AddEffectModal";
+import EffectModule from "../EffectModule";
 
-import { useRef, useState, useContext } from "react";
+
+import { useRef, useContext } from "react";
 
 const EffectsRack = () => {
     const { effects } = useContext(SynthContext);
+
     const dialogRef = useRef<HTMLDialogElement | null>(null);
 
     const openDialog = () => {
@@ -22,13 +25,29 @@ const EffectsRack = () => {
 
     return (
         <div className={styles["container"]}>
-            <button onClick={() => openDialog()}>Add Effect</button>
+            <button className={styles["add-effects-button"]} onClick={() => openDialog()}>Add Effect</button>
 
             <AddEffectModal dialogRef={dialogRef} closeDialog={() => closeDialog()} />
 
-            <div className={styles["modules"]}>
+            {Array.from(effects.entries()).map(([effectTypeName, effectList]) => (
+                <div key={effectTypeName}>
+                    <ul>
+                        <li>{effectTypeName}</li>
+                    </ul>
 
-            </div>
+                    {effectList.map((effect, index) =>
+                    (
+                        <div key={index} className={styles["modules"]}>
+                            <EffectModule key={effect.id} effect={effect} />
+                        </div>
+                    )
+                    )}
+                </div>
+            )
+            )}
+
+
+
         </div>
     );
 };

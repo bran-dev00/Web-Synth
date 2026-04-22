@@ -7,6 +7,7 @@ import { useContext, useCallback } from "react";
 export const useAudioEffects = () => {
   const { synthRef, effects, setEffects } = useContext(SynthContext);
 
+
   const createEffectInstance = useCallback((effectName: EffectTypeName): EffectInstance | null => {
     switch (effectName) {
       case "Chorus":
@@ -119,11 +120,13 @@ export const useAudioEffects = () => {
       effectArray.splice(effectIndex, 1);
 
       // Update the map
+      const newEffects = new Map(effects);
       if (effectArray.length === 0) {
-        effects.delete(effectName);
+        newEffects.delete(effectName);
       } else {
-        effects.set(effectName, effectArray);
+        newEffects.set(effectName, effectArray);
       }
+      setEffects(newEffects);
 
       // Reconnect synth if there are no more effects
       if (synthRef?.current && effects.size === 0) {
@@ -142,7 +145,6 @@ export const useAudioEffects = () => {
       return effects;
     }
   }, [synthRef, effects]);
-
 
   return {
     addEffect,
