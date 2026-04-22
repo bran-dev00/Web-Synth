@@ -123,13 +123,12 @@ export const useAudioEffects = () => {
       const newEffects = new Map(effects);
       if (effectArray.length === 0) {
         newEffects.delete(effectName);
-      } else {
-        newEffects.set(effectName, effectArray);
       }
+
       setEffects(newEffects);
 
       // Reconnect synth if there are no more effects
-      if (synthRef?.current && effects.size === 0) {
+      if (synthRef?.current && newEffects.size === 0) {
         synthRef.current.toDestination();
       }
 

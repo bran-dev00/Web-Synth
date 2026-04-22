@@ -1,7 +1,7 @@
 import styles from "./EffectRack.module.css"
 import { SynthContext } from "@/contexts/SynthContext";
 import AddEffectModal from "../addEffectModal/AddEffectModal";
-import EffectModule from "../EffectModule";
+import EffectModule from "../effectModule/EffectModule";
 
 
 import { useRef, useContext } from "react";

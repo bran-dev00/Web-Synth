@@ -10,7 +10,6 @@ const AddEffectModal = ({ dialogRef, closeDialog }: { dialogRef: React.Ref<HTMLD
     const handleAddEffect = (name: EffectTypeName) => {
         addEffect(name);
         closeDialog();
-        //TODO: Create Effect Module
     }
 
     return (
