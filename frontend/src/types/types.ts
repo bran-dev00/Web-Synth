@@ -44,13 +44,6 @@ export type EffectType<T extends EffectTypeName = EffectTypeName> = {
   settings?: object
 };
 
-interface Envelope{
-  attack: number,
-  decay: number,
-  sustain: number,
-  release: number
-};
-
 export type EffectMap ={
   [K in EffectTypeName]: EffectType<K>[]
 };
@@ -61,6 +54,23 @@ export type EffectTypeName =
   | "Distortion"
   | "Reverb"
   | "Phaser"
+
+export type ParamType = 'number' | 'boolean' | 'select';
+
+export interface EffectParameterConfig{
+  label: string;
+  property: string; 
+  min?: number;
+  max?: number;
+  step?: number;
+  type: ParamType;
+  options?: string[]; // for drop downs with several options
+}
+
+export interface EffectSchema {
+  name: string;
+  params: EffectParameterConfig[];
+}
 
 // Type Guards 
 
