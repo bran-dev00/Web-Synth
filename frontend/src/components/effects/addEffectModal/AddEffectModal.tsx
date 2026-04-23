@@ -5,7 +5,7 @@ import { EffectTypeName } from "@/types/types"
 const AddEffectModal = ({ dialogRef, closeDialog }: { dialogRef: React.Ref<HTMLDialogElement>, closeDialog: () => void }) => {
 
     const { addEffect } = useAudioEffects();
-    const effectsList: EffectTypeName[] = ["Chorus", "Distortion", "Reverb", "Filter"];
+    const effectsList: EffectTypeName[] = ["Chorus", "Distortion", "Reverb", "AutoFilter"];
 
     const handleAddEffect = (name: EffectTypeName) => {
         addEffect(name);

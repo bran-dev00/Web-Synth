@@ -31,7 +31,7 @@ export type PolyCompatibleSynth =
 //Keeping it to simple effects for now
 export type EffectInstance = 
 | Tone.Chorus
-| Tone.Filter
+| Tone.AutoFilter
 | Tone.Reverb
 | Tone.Phaser
 | Tone.Distortion
@@ -50,7 +50,7 @@ export type EffectMap ={
 
 export type EffectTypeName =
   | "Chorus"
-  | "Filter"
+  | "AutoFilter"
   | "Distortion"
   | "Reverb"
   | "Phaser"

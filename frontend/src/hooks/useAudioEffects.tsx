@@ -16,8 +16,8 @@ export const useAudioEffects = () => {
         return new Tone.Distortion();
       case "Reverb":
         return new Tone.Reverb();
-      case "Filter":
-        return new Tone.Filter();
+      case "AutoFilter":
+        return new Tone.AutoFilter();
       case "Phaser":
         return new Tone.Phaser();
       default:
@@ -73,10 +73,16 @@ export const useAudioEffects = () => {
 
       setEffects(newEffects);
 
-      // Connect synth to effect, then effect to destination
-      synthRef.current.disconnect(); // Disconnect from destination first
-      synthRef.current.connect(effectInstance);
-      effectInstance.toDestination();
+      // Reconnect the audio chain
+      synthRef.current.disconnect();
+      let currentNode: Tone.ToneAudioNode = synthRef.current;
+      for (const [type, arr] of newEffects) {
+        for (const effect of arr) {
+          currentNode.connect(effect.instance);
+          currentNode = effect.instance;
+        }
+      }
+      currentNode.toDestination();
 
       console.log("Effect added:", effectName, effectObj);
       console.log("effect", effects);
@@ -130,6 +136,17 @@ export const useAudioEffects = () => {
       // Reconnect synth if there are no more effects
       if (synthRef?.current && newEffects.size === 0) {
         synthRef.current.toDestination();
+      } else {
+        // Reconnect the audio chain
+        synthRef.current.disconnect();
+        let currentNode: Tone.ToneAudioNode = synthRef.current;
+        for (const [type, arr] of newEffects) {
+          for (const effect of arr) {
+            currentNode.connect(effect.instance);
+            currentNode = effect.instance;
+          }
+        }
+        currentNode.toDestination();
       }
 
       console.log("Effect removed:", effectName, id);
