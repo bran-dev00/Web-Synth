@@ -31,10 +31,7 @@ const EffectsRack = () => {
 
             {Array.from(effects.entries()).map(([effectTypeName, effectList]) => (
                 <div key={effectTypeName}>
-                    <ul>
-                        <li>{effectTypeName}</li>
-                    </ul>
-
+                    <div className={styles["effect-tab"]}>{effectTypeName}</div>
                     {effectList.map((effect, index) =>
                     (
                         <div key={index} className={styles["modules"]}>

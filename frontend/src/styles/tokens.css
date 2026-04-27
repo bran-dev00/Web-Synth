@@ -27,6 +27,9 @@
     --color-error: #ef4444;
     --color-border: #334155;
 
+    /* Gradients */
+    --gradient-module-card: linear-gradient(135deg, #1e293b 0%, #0a2d5f 100%);
+
     /* Typography */
     --font-size-base: 16px;
     --font-size-sm: 14px;

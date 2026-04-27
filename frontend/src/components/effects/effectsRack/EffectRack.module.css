@@ -9,6 +9,14 @@
     grid-row: 1 / 2;
 }
 
+.effect-tab{
+    text-align: center;
+    padding:4px;
+    background-color: var(--color-background);
+    padding: .5rem;
+    margin:.5rem;
+}
+
 .add-effects-button{
     background-color: var(--color-background);
     border-radius: 4px;

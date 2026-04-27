@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { EffectInstance, EffectSchema, EffectTypeName } from "@/types/types"
 import { EFFECT_CONFIGS } from "@/config/effectSchema"
+import styles from "./EffectParams.module.css"
 
 const EffectParams = ({ effectName, effectInstance }: { effectName: EffectTypeName, effectInstance: EffectInstance }) => {
 
@@ -21,12 +22,12 @@ const EffectParams = ({ effectName, effectInstance }: { effectName: EffectTypeNa
         <>
             {EFFECT_CONFIGS[effectName].params.map(({ label, options, property, min, max, type, step }, index) =>
             (
-                <div key={index}>
-                    <h4>{label}</h4>
+                <div className={styles["wrapper"]} key={index}>
+                    <label className={styles["label"]} htmlFor={property}>{label}</label>
                     {
                         type == "number" ?
                             (
-                                <input onChange={(e) => handleOnChange(effectInstance, property, e.target.value, type)} min={min} max={max} type="range" step={step} />
+                                <input name={property} onChange={(e) => handleOnChange(effectInstance, property, e.target.value, type)} min={min} max={max} type="range" step={step} />
                             ) :
                             (
                                 <select onChange={(e) => handleOnChange(effectInstance, property, e.target.value, type)}>

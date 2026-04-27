@@ -17,8 +17,10 @@ const EffectModule = (props: EffectModuleProps) => {
     return (
         <>
             <div className={styles["container"]}>
-                <h3>Name:{effect.effectTypeName} </h3>
-                <EffectParams effectName={effect.effectTypeName} effectInstance={effect.instance} />
+                <h3 className={styles["module-name"]}>{effect.effectTypeName}</h3>
+                <div className={styles["params"]}>
+                    <EffectParams effectName={effect.effectTypeName} effectInstance={effect.instance} />
+                </div>
                 <button className={styles["remove-button"]} onClick={() => removeEffect(effect.effectTypeName, effect.id)}>Remove</button>
             </div>
         </>
