@@ -5,8 +5,7 @@ import { useContext, useCallback } from "react";
 
 
 export const useAudioEffects = () => {
-  const { synthRef, effects, setEffects } = useContext(SynthContext);
-
+  const { synthRef, effectChain, setEffectChain } = useContext(SynthContext);
 
   const createEffectInstance = useCallback((effectName: EffectTypeName): EffectInstance | null => {
     switch (effectName) {
@@ -31,11 +30,10 @@ export const useAudioEffects = () => {
         throw new Error("No SynthRef Found");
       }
 
-      if (!effects) {
-        throw new Error("Effects Map Not Instanciated, please check SynthContext");
+      if (!effectChain) {
+        throw new Error("The Effects Chain is Not Instanciated, please check SynthContext");
       }
 
-      // Create the effect instance
       const effectInstance = createEffectInstance(effectName);
       if (!effectInstance) {
         throw new Error(`Invalid effect name: ${effectName}`);
@@ -46,17 +44,9 @@ export const useAudioEffects = () => {
         Object.assign(effectInstance, settings);
       }
 
-      // Get or create the effect array for this effect type
-      let effectsArr = effects.get(effectName);
-      if (!effectsArr) {
-        effectsArr = [];
-        effects.set(effectName, effectsArr);
-      }
+      //TODO: get a better id gen system
+      const id = effectChain.length;
 
-      // Generate ID based on current array length (before adding)
-      const id = effectsArr.length;
-
-      // Create effect object
       const effectObj: EffectType = {
         id: id,
         instance: effectInstance,
@@ -65,107 +55,73 @@ export const useAudioEffects = () => {
         settings: settings,
       };
 
-      // Add to array
-      effectsArr.push(effectObj);
+      const newArr = [...effectChain, effectObj];
+      setEffectChain(newArr);
 
-      effects.set(effectName, effectsArr);
-      const newEffects = new Map(effects);
-
-      setEffects(newEffects);
-
-      // Reconnect the audio chain
+      // Reconnect the audio chain using the new chain
       synthRef.current.disconnect();
       let currentNode: Tone.ToneAudioNode = synthRef.current;
-      for (const [type, arr] of newEffects) {
-        for (const effect of arr) {
-          currentNode.connect(effect.instance);
-          currentNode = effect.instance;
-        }
+
+      for (const effect of newArr) {
+        currentNode.connect(effect.instance);
+        currentNode = effect.instance;
       }
+
       currentNode.toDestination();
 
       console.log("Effect added:", effectName, effectObj);
-      console.log("effect", effects);
-      console.log('effect.entries', effects.entries())
     } catch (error) {
       console.error("Error adding effect:", error);
     }
-  }, [synthRef, effects, createEffectInstance]);
+  }, [synthRef, effectChain, createEffectInstance]);
 
-  const removeEffect = useCallback((effectName: EffectTypeName, id: number) => {
+  const removeEffect = useCallback((id: number) => {
     try {
-      if (!effects) {
-        throw new Error("Effects Map Not Instanciated, please check SynthContext");
-      }
-
-      if (!effects.has(effectName)) {
-        console.warn(`Effect type ${effectName} not found`);
-        return;
-      }
-
-      const effectArray = effects.get(effectName);
-      if (!effectArray || effectArray.length === 0) {
-        console.warn(`Effect array for ${effectName} is empty`);
-        return;
-      }
-
-      // Find and remove the effect
-      const effectIndex = effectArray.findIndex((effect) => effect.id === id);
+      const effectIndex = effectChain.findIndex((effect) => effect.id === id);
       if (effectIndex === -1) {
-        console.warn(`Effect with id ${id} not found in ${effectName}`);
+        console.warn(`Effect with id ${id} not found`);
         return;
       }
 
-      const effectToRemove = effectArray[effectIndex];
+      const effectToRemove = effectChain[effectIndex];
 
       // Dispose of the effect instance
       effectToRemove.instance.disconnect();
       effectToRemove.instance.dispose();
 
-      // Remove from array
-      effectArray.splice(effectIndex, 1);
-
-      // Update the map
-      const newEffects = new Map(effects);
-      if (effectArray.length === 0) {
-        newEffects.delete(effectName);
-      }
-
-      setEffects(newEffects);
+      // Update effectChain
+      const newChain = effectChain.filter((effect) => effect.id !== id);
+      setEffectChain(newChain);
 
       // Reconnect synth if there are no more effects
-      if (synthRef?.current && newEffects.size === 0) {
+      if (!synthRef?.current) return;
+
+      if (newChain.length === 0) {
         synthRef.current.toDestination();
       } else {
-        // Reconnect the audio chain
+        // Reconnect the audio chain using the new chain
         synthRef.current.disconnect();
         let currentNode: Tone.ToneAudioNode = synthRef.current;
-        for (const [type, arr] of newEffects) {
-          for (const effect of arr) {
-            currentNode.connect(effect.instance);
-            currentNode = effect.instance;
-          }
+        for (const effect of newChain) {
+          currentNode.connect(effect.instance);
+          currentNode = effect.instance;
         }
         currentNode.toDestination();
       }
 
-      console.log("Effect removed:", effectName, id);
+      console.log("Effect removed:", id);
     } catch (error) {
       console.error("Error removing effect:", error);
     }
-  }, [synthRef, effects]);
+  }, [synthRef, effectChain]);
 
   const getActiveEffects = useCallback(() => {
-    if (effects) {
-      console.log(effects);
-      return effects;
-    }
-  }, [synthRef, effects]);
+    return effectChain;
+  }, [effectChain]);
 
   return {
     addEffect,
     removeEffect,
     getActiveEffects,
-    effects,
   };
 };

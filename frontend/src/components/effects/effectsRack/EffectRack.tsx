@@ -7,8 +7,7 @@ import EffectModule from "../effectModule/EffectModule";
 import { useRef, useContext } from "react";
 
 const EffectsRack = () => {
-    const { effects } = useContext(SynthContext);
-
+    const { effectChain } = useContext(SynthContext);
     const dialogRef = useRef<HTMLDialogElement | null>(null);
 
     const openDialog = () => {
@@ -25,25 +24,18 @@ const EffectsRack = () => {
 
     return (
         <div className={styles["container"]}>
-            <button className={styles["add-effects-button"]} onClick={() => openDialog()}>Add Effect</button>
+            <div className={styles["header"]}>
+                <button className={styles["add-effects-button"]} onClick={() => openDialog()}>Add Effect</button>
+            </div>
 
             <AddEffectModal dialogRef={dialogRef} closeDialog={() => closeDialog()} />
-
-            {Array.from(effects.entries()).map(([effectTypeName, effectList]) => (
-                <div key={effectTypeName}>
-                    <div className={styles["effect-tab"]}>{effectTypeName}</div>
-                    {effectList.map((effect, index) =>
-                    (
-                        <div key={index} className={styles["modules"]}>
-                            <EffectModule key={effect.id} effect={effect} />
-                        </div>
-                    )
-                    )}
-                </div>
-            )
-            )}
-
-
+            {
+                effectChain.map((effect) => (
+                    <div key={effect.id} className={styles["modules"]}>
+                        <EffectModule key={effect.id} effect={effect} />
+                    </div>
+                ))
+            }
 
         </div>
     );

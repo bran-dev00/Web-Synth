@@ -1,6 +1,6 @@
 import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
-import { SynthInstance, Note, EffectType, EffectTypeName, EffectInstance, SynthRef } from "../types/types";
+import { SynthInstance, Note, EffectType, SynthRef } from "../types/types";
 
 //TODO -> Handle Effects Updates
 
@@ -8,9 +8,10 @@ export type SynthContextType = {
   synthRef: SynthRef;
   currentSynthType: string;
   isPolyphonic: boolean;
-  effects: Map<EffectTypeName, EffectType[]>;
+  effectChain: EffectType[];
 
-  setEffects: React.Dispatch<React.SetStateAction<Map<EffectTypeName, EffectType[]>>>;
+  setEffectChain: React.Dispatch<React.SetStateAction<EffectType[]>>;
+
   changeSynth: (newSynth: string) => void;
   playNote: (synth: SynthInstance, note: Note) => void;
   releaseNote: (synth: SynthInstance, note: Note) => void;
@@ -23,9 +24,9 @@ export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
   currentSynthType: "",
   isPolyphonic: false,
-  effects: new Map<EffectTypeName, EffectType[]>(),
+  effectChain: [],
 
-  setEffects: () => { },
+  setEffectChain: () => { },
   changeSynth: () => { },
   playNote: () => { },
   releaseNote: () => { },
@@ -49,11 +50,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   const currentNotesPressed = useRef<string[]>([]);
 
 
-  const [effects, setEffects] = useState<Map<EffectTypeName, EffectType[]>>(
-    new Map<EffectTypeName, EffectType[]>()
-  );
-
-
+  const [effectChain, setEffectChain] = useState<EffectType[]>([]);
 
   // const effects = new Map<EffectTypeName, EffectType[]>();
 
@@ -179,9 +176,9 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     synthRef: synthRef,
     currentSynthType: currentSynthType,
     isPolyphonic: isPolyphonic,
-    effects: effects,
+    effectChain: effectChain,
 
-    setEffects: setEffects,
+    setEffectChain: setEffectChain,
     changeSynth: changeSynth,
     playNote: playNote,
     releaseNote: releaseNote,

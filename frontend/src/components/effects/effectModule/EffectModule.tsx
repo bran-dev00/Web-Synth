@@ -1,4 +1,4 @@
-import { EffectType, EffectSchema } from "@/types/types";
+import { EffectType } from "@/types/types";
 import styles from "./EffectModule.module.css"
 import { useAudioEffects } from "@/hooks/useAudioEffects";
 import EffectParams from "../effectParams/EffectParams";
@@ -21,7 +21,7 @@ const EffectModule = (props: EffectModuleProps) => {
                 <div className={styles["params"]}>
                     <EffectParams effectName={effect.effectTypeName} effectInstance={effect.instance} />
                 </div>
-                <button className={styles["remove-button"]} onClick={() => removeEffect(effect.effectTypeName, effect.id)}>Remove</button>
+                <button className={styles["remove-button"]} onClick={() => removeEffect(effect.id)}>Remove</button>
             </div>
         </>
     );

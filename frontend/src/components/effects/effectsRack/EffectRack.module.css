@@ -7,6 +7,7 @@
     padding: 8px;
     grid-area:effects;
     grid-row: 1 / 2;
+    overflow-x: auto;
 }
 
 .effect-tab{
