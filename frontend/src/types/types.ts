@@ -64,6 +64,10 @@ export interface EffectParameterConfig{
   max?: number;
   step?: number;
   type: ParamType;
+  control?: "slider" | "knob";
+  knobSize?: number;
+  startDeg?: number;
+  endDeg?: number;
   options?: string[]; // for drop downs with several options
 }
 

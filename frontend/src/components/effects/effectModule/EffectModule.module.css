@@ -1,35 +1,50 @@
-
-.container{
-    display: flex;
-    flex-direction: column;
-    background:var(--gradient-module-card);
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
-    margin: 4px;
+.container {
+  display: flex;
+  flex-direction: column;
+  background: var(--gradient-module-card);
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  min-width: 170px;
+  width: 170px;
+  overflow: hidden;
 }
 
-.params{
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: center;
-    margin-bottom: .5rem;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-accent-dark);
+  padding: 4px 6px;
 }
 
-.module-name{
-    color:var(--color-text);
-    font-weight: bold;
-    text-align: center;
+.module-name {
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 600;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.remove-button{
-    background-color: var(--color-background);
-    border:2px solid var(--color-accent);
-    border-radius: 4px;
-    padding:4px;
+.remove-button {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  border-radius: 2px;
 }
 
-.remove-button:hover{
-    background-color: var(--color-accent);
+.remove-button:hover {
+  color: var(--color-error);
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.params {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 4px;
+  padding: 6px;
 }

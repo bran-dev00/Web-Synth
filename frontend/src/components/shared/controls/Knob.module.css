@@ -1,0 +1,36 @@
+
+.knob{
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+}
+
+
+.knob-base{
+    fill: var(--knob-base);
+    stroke: rgba(255,255,255,.005);
+}
+
+.knob-track{
+    /* stroke: var(--knob-track); */
+    stroke:var(--knob-track) ;
+    fill:none;
+    stroke-linecap: round;
+}
+
+.knob-track-active{
+    stroke-linecap: round;
+    fill: none;
+    stroke: var(--color-accent);
+    cursor:grab;
+}
+
+.dot{
+    stroke:var(--knob-dot-outer);
+    fill:#0e0e10;
+    cursor: grab;
+}
+
+.dot:active {
+    cursor: grabbing;
+}

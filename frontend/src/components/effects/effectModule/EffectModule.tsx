@@ -15,16 +15,22 @@ const EffectModule = (props: EffectModuleProps) => {
     const { removeEffect } = useAudioEffects();
 
     return (
-        <>
-            <div className={styles["container"]}>
+        <div className={styles["container"]}>
+            <div className={styles["header"]}>
                 <h3 className={styles["module-name"]}>{effect.effectTypeName}</h3>
-                <div className={styles["params"]}>
-                    <EffectParams effectName={effect.effectTypeName} effectInstance={effect.instance} />
-                </div>
-                <button className={styles["remove-button"]} onClick={() => removeEffect(effect.id)}>Remove</button>
+                <button
+                    className={styles["remove-button"]}
+                    onClick={() => removeEffect(effect.id)}
+                    title="Remove effect"
+                >
+                    ✕
+                </button>
             </div>
-        </>
+            <div className={styles["params"]}>
+                <EffectParams effectName={effect.effectTypeName} effectInstance={effect.instance} />
+            </div>
+        </div>
     );
 }
 
-export default EffectModule;
+export default EffectModule

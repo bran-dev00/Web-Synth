@@ -6,7 +6,7 @@ import { SynthContext } from "@/contexts/SynthContext";
 
 import PianoKeyboardLayout from "@/components/pianoKeyboard/PianoKeyboardLayout";
 import styles from "./Playground.module.css"
-import { EffectRack } from "../effects/effectsRack/EffectRack"
+import Knob from "../shared/controls/Knob";
 
 import { createPolySynth } from "../../utils/utils"
 
@@ -113,6 +113,14 @@ const Playground = () => {
 
   // }
 
+  const [value, setValue] = useState(10);
+
+
+  const handleChange = (value: number) => {
+    console.log("value: ", value);
+    setValue(value)
+  }
+
 
 
   return (
@@ -155,6 +163,13 @@ const Playground = () => {
 
           <PianoKeyboardLayout />
         </div>
+
+        <div className={styles["knob-wrapper"]}>
+          <label htmlFor="volume">Volume</label>
+          <Knob size={50} min={0} max={100} startDeg={-135} endDeg={135} value={value} onChange={handleChange} />
+          <span className={styles["knob-value"]}>{Math.round(value)}</span>
+        </div>
+
         <div >
           <DebugPanel data={{ data: `${synthRef?.current?.get()}`, name: baseName }} />
         </div>

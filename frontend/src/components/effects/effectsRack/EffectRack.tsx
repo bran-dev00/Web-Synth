@@ -3,7 +3,6 @@ import { SynthContext } from "@/contexts/SynthContext";
 import AddEffectModal from "../addEffectModal/AddEffectModal";
 import EffectModule from "../effectModule/EffectModule";
 
-
 import { useRef, useContext } from "react";
 
 const EffectsRack = () => {
@@ -24,21 +23,15 @@ const EffectsRack = () => {
 
     return (
         <div className={styles["container"]}>
-            <div className={styles["header"]}>
-                <button className={styles["add-effects-button"]} onClick={() => openDialog()}>Add Effect</button>
-            </div>
+            <button className={styles["add-effects-button"]} onClick={() => openDialog()}>+ Add Effect</button>
 
             <AddEffectModal dialogRef={dialogRef} closeDialog={() => closeDialog()} />
-            {
-                effectChain.map((effect) => (
-                    <div key={effect.id} className={styles["modules"]}>
-                        <EffectModule key={effect.id} effect={effect} />
-                    </div>
-                ))
-            }
 
+            {effectChain.map((effect) => (
+                <EffectModule key={effect.id} effect={effect} />
+            ))}
         </div>
     );
 };
 
-export default EffectsRack 
+export default EffectsRack

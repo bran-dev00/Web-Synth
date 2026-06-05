@@ -16,9 +16,9 @@ const AddEffectModal = ({ dialogRef, closeDialog }: { dialogRef: React.Ref<HTMLD
         <dialog ref={dialogRef} className={styles["overlay"]}>
             <button className={styles["close-button"]} onClick={closeDialog}>Close</button>
             <div className={styles["content"]} onClick={(e) => e.stopPropagation()}>
-                <h3>Add Effect</h3>
                 <div className={styles["buttons-wrapper"]}>
                     {effectsList.map((name) => (
+                        //TODO: Fix AddEffect Id's
                         <button onClick={() => handleAddEffect(name)} className={styles["effect-button"]}> {name}</button>
                     ))}
                 </div>

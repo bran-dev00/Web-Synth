@@ -1,28 +1,30 @@
-
 .container{
     background-color: var(--color-surface);
     border: 1px solid var(--color-accent);
     border-radius: 4px;
     display: flex;
+    align-items: stretch;
+    gap: 6px;
     padding: 8px;
     grid-area:effects;
     grid-row: 1 / 2;
     overflow-x: auto;
 }
 
-.effect-tab{
-    text-align: center;
-    padding:4px;
-    background-color: var(--color-background);
-    padding: .5rem;
-    margin:.5rem;
-}
-
 .add-effects-button{
     background-color: var(--color-background);
+    border: 1px dashed var(--color-border);
     border-radius: 4px;
-    border:none;
-    padding:.5rem;
-    width:fit-content;
-    height:100%;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 100px;
+    white-space: nowrap;
+}
+
+.add-effects-button:hover{
+    background-color: var(--color-accent-dark);
+    color: var(--color-text);
+    border-color: var(--color-accent);
 }
