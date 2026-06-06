@@ -50,7 +50,8 @@ const EffectParams = ({ effectName, effectInstance }: { effectName: EffectTypeNa
 
     return (
         <>
-            {EFFECT_CONFIGS[effectName].params.map(({ label, options, property, min, max, type, step, control, knobSize, startDeg, endDeg }, index) =>
+            {/* Makes sure knobs are placed first */}
+            {[...EFFECT_CONFIGS[effectName].params].sort((a, b) => (a.type === "select" ? 1 : 0) - (b.type === "select" ? 1 : 0)).map(({ label, options, property, min, max, type, step, control, knobSize, startDeg, endDeg }, index) =>
             (
                 <div className={`${styles["wrapper"]}${type === "select" ? " " + styles["full-width"] : ""}`} key={index}>
                     <label className={styles["label"]} htmlFor={property}>{label}</label>

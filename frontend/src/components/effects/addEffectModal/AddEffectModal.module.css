@@ -1,6 +1,5 @@
 button:hover{
     cursor:pointer;
-    background-color: var(--color-primary);
 }
 
 .close-button{
@@ -9,6 +8,11 @@ button:hover{
     border: 1px solid var(--color-border);
     padding:8px;
     margin-bottom: 1rem;
+    transition: all .3s ease;
+}
+
+.close-button:hover{
+    background-color:var(--color-error);
 }
 
 .buttons-wrapper{
@@ -29,7 +33,6 @@ button:hover{
 
 .effect-button:hover{
     background-color: var(--color-primary);
-    cursor:pointer;
 }
 
 :modal{

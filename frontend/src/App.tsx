@@ -28,7 +28,7 @@ function App() {
     setCurrSynthName(synthRef?.current?.name);
   }, [synthRef?.current]);
 
-  const [debugStatus, setDebugStatus] = useState<boolean>(true);
+  const [debugStatus, setDebugStatus] = useState<boolean>(false);
 
   return (
     <>
