@@ -58,4 +58,49 @@ export const EFFECT_CONFIGS: Record<string, EffectSchema> = {
             { label: "Feedback", property: "feedback", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
         ]
     },
+    Phaser: {
+        name: "Phaser",
+        params: [
+            { label: "Wet", property: "wet", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Frequency", property: "frequency", max: 20, min: 0.1, step: 0.2, type: "number", ...knobDefaults },
+            { label: "Octaves", property: "octaves", max: 8, min: 0, step: 1, type: "number", ...knobDefaults },
+            { label: "Base Freq", property: "baseFrequency", max: 2000, min: 20, step: 20, type: "number", ...knobDefaults },
+            { label: "Q", property: "Q", max: 10, min: 0, step: 0.1, type: "number", ...knobDefaults },
+        ]
+    },
+    Vibrato: {
+        name: "Vibrato",
+        params: [
+            { label: "Wet", property: "wet", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Frequency", property: "frequency", max: 20, min: 0.1, step: 0.2, type: "number", ...knobDefaults },
+            { label: "Depth", property: "depth", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Wave Type", property: "type", type: "select", options: ["sine", "square", "triangle", "sawtooth"] },
+        ]
+    },
+    Tremolo: {
+        name: "Tremolo",
+        params: [
+            { label: "Wet", property: "wet", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Frequency", property: "frequency", max: 20, min: 0.1, step: 0.2, type: "number", ...knobDefaults },
+            { label: "Depth", property: "depth", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Spread", property: "spread", max: 180, min: 0, step: 2, type: "number", ...knobDefaults },
+            { label: "Wave Type", property: "type", type: "select", options: ["sine", "square", "triangle", "sawtooth"] },
+        ]
+    },
+    AutoPanner: {
+        name: "AutoPanner",
+        params: [
+            { label: "Wet", property: "wet", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Frequency", property: "frequency", max: 20, min: 0.1, step: 0.2, type: "number", ...knobDefaults },
+            { label: "Depth", property: "depth", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Wave Type", property: "type", type: "select", options: ["sine", "square", "triangle", "sawtooth"] },
+        ]
+    },
+    BitCrusher: {
+        name: "BitCrusher",
+        params: [
+            { label: "Wet", property: "wet", max: 1, min: 0, step: 0.01, type: "number", ...knobDefaults },
+            { label: "Bits", property: "bits", max: 16, min: 1, step: 1, type: "number", ...knobDefaults },
+        ]
+    },
 }

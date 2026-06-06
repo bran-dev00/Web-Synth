@@ -35,6 +35,10 @@ export type EffectInstance =
 | Tone.Reverb
 | Tone.Phaser
 | Tone.Distortion
+| Tone.Vibrato
+| Tone.Tremolo
+| Tone.AutoPanner
+| Tone.BitCrusher
 
 export type EffectType<T extends EffectTypeName = EffectTypeName> = {
   id: number,
@@ -54,6 +58,10 @@ export type EffectTypeName =
   | "Distortion"
   | "Reverb"
   | "Phaser"
+  | "Vibrato"
+  | "Tremolo"
+  | "AutoPanner"
+  | "BitCrusher"
 
 export type ParamType = 'number' | 'boolean' | 'select';
 

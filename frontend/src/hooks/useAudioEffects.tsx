@@ -19,6 +19,14 @@ export const useAudioEffects = () => {
         return new Tone.AutoFilter();
       case "Phaser":
         return new Tone.Phaser();
+      case "Vibrato":
+        return new Tone.Vibrato();
+      case "Tremolo":
+        return new Tone.Tremolo();
+      case "AutoPanner":
+        return new Tone.AutoPanner();
+      case "BitCrusher":
+        return new Tone.BitCrusher();
       default:
         return null;
     }

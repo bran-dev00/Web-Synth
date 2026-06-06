@@ -8,8 +8,32 @@
     padding: 8px;
     grid-area:effects;
     grid-row: 1 / 2;
-    overflow-x: auto;
+    overflow: hidden;
     margin:10px;
+    transition: padding 0.3s ease, border-color 0.3s ease;
+}
+
+.container.collapsed {
+    padding: 4px 8px;
+    border-color: var(--color-border);
+    cursor: pointer;
+}
+
+.collapsible {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    overflow: hidden;
+    max-height: 500px;
+    opacity: 1;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.collapsible.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 .add-effects-button{
@@ -28,4 +52,24 @@
     background-color: var(--color-accent-dark);
     color: var(--color-text);
     border-color: var(--color-accent);
+}
+
+.collapse-button {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 8px;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    align-self: flex-end;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.collapse-button:hover {
+    color: var(--color-text);
+    border-color: var(--color-accent);
+    background-color: var(--color-accent-dark);
 }
