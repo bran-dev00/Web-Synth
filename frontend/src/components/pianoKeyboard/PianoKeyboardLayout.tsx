@@ -18,7 +18,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   startingOctave = 2,
   endingOctave = 5,
 }) => {
-  const { synthRef, playNote, releaseNote } = useContext(SynthContext);
+  const { synthRef, playNote, releaseNote, activeNoteNames } = useContext(SynthContext);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
@@ -68,14 +68,15 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
     }
   };
 
+
+
   return (
     <div className={styles["container"]}>
       <div className={`${styles["piano-keyboard-layout"]} `}>
-        {/* TODO: How to setup a key for each element, we might need to add a ul and li elements to be able to style this easier */}
         {allWhiteKeys.map((note: Note) => (
           <Key
             key={note.name}
-            isActive={true}
+            isActive={activeNoteNames.includes(note.name)}
             onMouseUp={() => handleMouseUp(note)}
             onMouseDown={() => handleMouseDown(note)}
             onMouseDrag={() => handleMouseDragging(note)}
@@ -101,7 +102,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
                 }}
               >
                 <Key
-                  isActive={true}
+                  isActive={activeNoteNames.includes(note.name)}
                   onMouseUp={() => handleMouseUp(note)}
                   onMouseDown={() => handleMouseDown(note)}
                   onMouseDrag={() => handleMouseDragging(note)}

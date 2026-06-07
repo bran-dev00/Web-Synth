@@ -5,6 +5,11 @@ export interface Note {
   duration?: Tone.Unit.Time;
 }
 
+export interface Key{
+  note: Note;
+  active: Boolean;
+}
+
 export type SynthRef = React.RefObject<SynthInstance | null> | null;
 
 export type SynthInstance = 

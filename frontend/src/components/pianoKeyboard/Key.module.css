@@ -36,6 +36,11 @@
   height: 130px;
 }
 
+.key > button.active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
 .label-bottom{
   margin-top:auto;
   padding-bottom: 8px;

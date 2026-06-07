@@ -1,9 +1,7 @@
 import { useEffect, useContext } from "react";
-// import * as Tone from "tone";
 import { Note, SynthInstance } from "../types/types";
 import { keyNoteMap } from "@/utils/utils";
 import { SynthContext } from "@/contexts/SynthContext";
-
 
 const handleKeyDown = (
   e: KeyboardEvent,
@@ -34,33 +32,26 @@ const handleKeyUp = (
 
 export const useKeyboardSynth = () => {
   const { synthRef, playNote, releaseNote } = useContext(SynthContext);
-  // const synthRef = useRef<SynthInstance | null>(null);
 
   useEffect(() => {
-    //TODO: later change the event listener to a specific component
     if (!synthRef?.current) {
       console.error("SynthRef is null");
-    } else {
-      window.addEventListener("keydown", (e) => {
-        handleKeyDown(e, synthRef?.current, playNote);
-      });
-
-      window.addEventListener("keyup", (e) =>
-        handleKeyUp(e, synthRef?.current, releaseNote)
-      );
+      return;
     }
 
-    //Cleanup function to remove event listeners and dispose of the synth
+    const onKeyDown = (e: KeyboardEvent) =>
+      handleKeyDown(e, synthRef.current, playNote);
+    const onKeyUp = (e: KeyboardEvent) =>
+      handleKeyUp(e, synthRef.current, releaseNote);
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+
     return () => {
-      synthRef?.current?.dispose();
-      window.removeEventListener("keydown", (e) =>
-        handleKeyDown(e, synthRef?.current, playNote)
-      );
-      window.removeEventListener("keyup", (e) =>
-        handleKeyUp(e, synthRef?.current, releaseNote)
-      );
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
     };
-  }, []);
+  }, [synthRef, playNote, releaseNote]);
 
   return {
     handleKeyDown,

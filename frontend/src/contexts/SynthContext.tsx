@@ -2,13 +2,13 @@ import React, { createContext, useState, useRef, useEffect } from "react";
 import * as Tone from "tone";
 import { SynthInstance, Note, EffectType, SynthRef } from "../types/types";
 
-//TODO -> Handle Effects Updates
 
 export type SynthContextType = {
   synthRef: SynthRef;
   currentSynthType: string;
   isPolyphonic: boolean;
   effectChain: EffectType[];
+  activeNoteNames: string[];
 
   setEffectChain: React.Dispatch<React.SetStateAction<EffectType[]>>;
 
@@ -16,7 +16,6 @@ export type SynthContextType = {
   playNote: (synth: SynthInstance, note: Note) => void;
   releaseNote: (synth: SynthInstance, note: Note) => void;
   triggerAttackRelease: (synth: SynthInstance, note: Note) => void;
-
 }
 
 
@@ -25,6 +24,7 @@ export const SynthContext = createContext<SynthContextType>({
   currentSynthType: "",
   isPolyphonic: false,
   effectChain: [],
+  activeNoteNames: [],
 
   setEffectChain: () => { },
   changeSynth: () => { },
@@ -48,6 +48,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
 
   const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
   const currentNotesPressed = useRef<string[]>([]);
+  const [activeNoteNames, setActiveNoteNames] = useState<string[]>([]);
 
 
   const [effectChain, setEffectChain] = useState<EffectType[]>([]);
@@ -143,6 +144,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     if (currentNotesPressed.current.includes(note.name)) return;
 
     currentNotesPressed.current.push(note.name);
+    setActiveNoteNames([...currentNotesPressed.current]);
     synth.triggerAttack(note.name);
   };
 
@@ -163,6 +165,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     }
 
     currentNotesPressed.current.splice(noteIndex, 1);
+    setActiveNoteNames([...currentNotesPressed.current]);
   };
 
   const triggerAttackRelease = (synth: SynthInstance, note: Note) => {
@@ -177,6 +180,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     currentSynthType: currentSynthType,
     isPolyphonic: isPolyphonic,
     effectChain: effectChain,
+    activeNoteNames: activeNoteNames,
 
     setEffectChain: setEffectChain,
     changeSynth: changeSynth,

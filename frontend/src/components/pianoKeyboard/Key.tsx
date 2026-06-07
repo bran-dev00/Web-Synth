@@ -24,8 +24,9 @@ const Key: React.FC<KeyProps> = ({
   note,
   keyType,
   label,
+  isActive,
 }) => {
-  // const keyRef = useRef(null);
+  const keyClass = `${keyType === "white" ? styles["white-key"] : styles["black-key"]} ${isActive ? styles["active"] : ""}`;
 
   return (
     <>
@@ -35,7 +36,7 @@ const Key: React.FC<KeyProps> = ({
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
           onMouseEnter={onMouseDrag}
-          className={keyType === "white" ? styles["white-key"] : styles["black-key"]}
+          className={keyClass}
         >
           {label && <span className={keyType === "white" ? styles["label-bottom"] : styles["label-center"]}>{note.name}</span>}
         </button>
