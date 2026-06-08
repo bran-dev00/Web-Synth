@@ -9,9 +9,12 @@ export type SynthContextType = {
   isPolyphonic: boolean;
   effectChain: EffectType[];
   activeNoteNames: string[];
+  currentOctave: number;
 
   setEffectChain: React.Dispatch<React.SetStateAction<EffectType[]>>;
 
+
+  updateOctave: (newOctave: number) => void;
   changeSynth: (newSynth: string) => void;
   playNote: (synth: SynthInstance, note: Note) => void;
   releaseNote: (synth: SynthInstance, note: Note) => void;
@@ -25,7 +28,9 @@ export const SynthContext = createContext<SynthContextType>({
   isPolyphonic: false,
   effectChain: [],
   activeNoteNames: [],
+  currentOctave: 4, //default octave 
 
+  updateOctave: () => { },
   setEffectChain: () => { },
   changeSynth: () => { },
   playNote: () => { },
@@ -49,6 +54,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
   const currentNotesPressed = useRef<string[]>([]);
   const [activeNoteNames, setActiveNoteNames] = useState<string[]>([]);
+  const [currentOctave, setCurrentOctave] = useState<number>(4);
 
 
   const [effectChain, setEffectChain] = useState<EffectType[]>([]);
@@ -70,6 +76,15 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
       }
     };
   }, []);
+
+  const updateOctave = (newOctave: number) => {
+    if (newOctave < 1 || newOctave > 7) {
+      console.error("Octave out of bounds. Must be between 1 and 7.");
+      return;
+    }
+
+    setCurrentOctave(newOctave);
+  }
 
   const changeSynth = (newSynth: string) => {
     if (synthRef?.current) {
@@ -181,8 +196,10 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     isPolyphonic: isPolyphonic,
     effectChain: effectChain,
     activeNoteNames: activeNoteNames,
+    currentOctave: currentOctave,
 
     setEffectChain: setEffectChain,
+    updateOctave: updateOctave,
     changeSynth: changeSynth,
     playNote: playNote,
     releaseNote: releaseNote,

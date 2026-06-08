@@ -9,14 +9,17 @@ import {
 } from "@/utils/utils.tsx";
 
 interface PianoKeyboardLayoutProps {
+  numOctaves: number;
   startingOctave?: number;
   endingOctave?: number;
 }
 
+
 //Handles the 'piano keyboard' rendering and IO keyboard & mouse events 
 const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   startingOctave = 2,
-  endingOctave = 5,
+  numOctaves,
+  endingOctave = startingOctave + (numOctaves - startingOctave),
 }) => {
   const { synthRef, playNote, releaseNote, activeNoteNames } = useContext(SynthContext);
 
@@ -29,7 +32,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
 
   //flatten all octaves
   const allWhiteKeys = octaveGroups.flatMap((group) => group.whiteKeys);
-  const allBlackKeys = octaveGroups.flatMap((group) => group.blackKeys);
+  // const allBlackKeys = octaveGroups.flatMap((group) => group.blackKeys);
 
   // console.log("blackKeys: ", allBlackKeys);
   // console.log("octaveGroups", octaveGroups);

@@ -1,28 +1,53 @@
 import { useEffect, useContext } from "react";
 import { Note, SynthInstance } from "../types/types";
-import { keyNoteMap } from "@/utils/utils";
+import { keyNoteMapByOctave } from "@/utils/utils";
 import { SynthContext } from "@/contexts/SynthContext";
+
 
 const handleKeyDown = (
   e: KeyboardEvent,
   synthRef: SynthInstance | null | undefined,
-  playNote: (synthRef: SynthInstance, note: Note) => void
+  playNote: (synthRef: SynthInstance, note: Note) => void,
+  updateOctave: (newOctave: number) => void,
+  currentOctave: number
 ) => {
-  if (synthRef) {
-    const note = keyNoteMap.get(e.key.toLowerCase());
-    if (note) {
-      playNote(synthRef, note);
+  if (!synthRef) return;
+
+  if (e.shiftKey && e.key === "ArrowUp") {
+    e.preventDefault();
+    if (currentOctave >= 7) {
+      console.warn("Already at maximum octave. Cannot shift up.");
+      return;
     }
+    updateOctave(currentOctave + 1);
+    return;
+  }
+
+  if (e.shiftKey && e.key === "ArrowDown") {
+    e.preventDefault();
+    if (currentOctave <= 1) {
+      console.warn("Already at minimum octave. Cannot shift down.");
+      return;
+    }
+    updateOctave(currentOctave - 1);
+    return;
+  }
+
+  const note = keyNoteMapByOctave(currentOctave).get(e.key.toLowerCase());
+  if (note) {
+    playNote(synthRef, note);
   }
 };
 
 const handleKeyUp = (
   e: KeyboardEvent,
   synthRef: SynthInstance | null | undefined,
-  releaseNote: (synthRef: SynthInstance, note: Note) => void
+  releaseNote: (synthRef: SynthInstance, note: Note) => void,
+  currentOctave: number
 ) => {
   if (synthRef) {
-    const note = keyNoteMap.get(e.key.toLowerCase());
+
+    const note = keyNoteMapByOctave(currentOctave).get(e.key.toLowerCase());
 
     if (note) {
       releaseNote(synthRef, note);
@@ -31,7 +56,7 @@ const handleKeyUp = (
 };
 
 export const useKeyboardSynth = () => {
-  const { synthRef, playNote, releaseNote } = useContext(SynthContext);
+  const { synthRef, playNote, releaseNote, currentOctave, updateOctave } = useContext(SynthContext);
 
   useEffect(() => {
     if (!synthRef?.current) {
@@ -40,9 +65,9 @@ export const useKeyboardSynth = () => {
     }
 
     const onKeyDown = (e: KeyboardEvent) =>
-      handleKeyDown(e, synthRef.current, playNote);
+      handleKeyDown(e, synthRef.current, playNote, updateOctave, currentOctave);
     const onKeyUp = (e: KeyboardEvent) =>
-      handleKeyUp(e, synthRef.current, releaseNote);
+      handleKeyUp(e, synthRef.current, releaseNote, currentOctave);
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
@@ -51,7 +76,7 @@ export const useKeyboardSynth = () => {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
     };
-  }, [synthRef, playNote, releaseNote]);
+  }, [synthRef, playNote, releaseNote, updateOctave, currentOctave]);
 
   return {
     handleKeyDown,

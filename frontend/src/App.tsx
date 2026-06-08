@@ -42,7 +42,7 @@ function App() {
 
         <main className="main-content">
           <EffectsRack />
-          <PianoKeyboardLayout />
+          <PianoKeyboardLayout numOctaves={5} />
         </main>
       </div>
 

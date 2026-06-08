@@ -1,5 +1,5 @@
 import { Monophonic } from "tone/build/esm/instrument/Monophonic";
-import { Note,PolyCompatibleSynth } from "../types/types";
+import { Note, PolyCompatibleSynth } from "../types/types";
 import * as Tone from "tone";
 import { Instrument } from "tone/build/esm/instrument/Instrument";
 
@@ -17,6 +17,8 @@ export const noteNames = [
   "A#",
   "B",
 ];
+
+export const defaultPianoHotkeys = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';'];
 
 export const whiteKeyNames = ["C", "D", "E", "F", "G", "A", "B"];
 export const blackKeyNames = ["C#", "D#", "F#", "G#", "A#"];
@@ -121,43 +123,44 @@ export const getBlackKeyOffset = (
   return octaveOffset + positionOffset;
 };
 
-export const keyNoteMap = new Map<string, Note>([
-  ["a", { name: "C4", duration: "8n" }],
-  ["w", { name: "C#4", duration: "8n" }],
-  ["s", { name: "D4", duration: "8n" }],
-  ["e", { name: "D#4", duration: "8n" }],
-  ["d", { name: "E4", duration: "8n" }],
-  ["f", { name: "F4", duration: "8n" }],
-  ["t", { name: "F#4", duration: "8n" }],
-  ["g", { name: "G4", duration: "8n" }],
-  ["y", { name: "G#4", duration: "8n" }],
-  ["h", { name: "A4", duration: "8n" }],
-  ["u", { name: "A#4", duration: "8n" }],
-  ["j", { name: "B4", duration: "8n" }],
-  ["k", { name: "C5", duration: "8n" }],
-  ["o", { name: "C#5", duration: "8n" }],
-  ["l", { name: "D5", duration: "8n" }],
-  ["p", { name: "D#5", duration: "8n" }],
-  [";", { name: "E5", duration: "8n" }],
-]);
+
+export const keyNoteMapByOctave = (octave: number) => {
+  if (octave < 1 || octave > 7) {
+    console.error("octave is out of bounds");
+    return new Map<string, Note>();
+  }
+
+  const map = new Map<string, Note>();
+
+  defaultPianoHotkeys.forEach((key, index) => {
+    const noteName = noteNames[index % noteNames.length];
+    const note: Note = {
+      name: `${noteName}${octave}`,
+      duration: "8n",
+    };
+    map.set(key, note);
+  });
+
+  return map;
+}
 
 
 // Check if instrument/synth is Monophonic
 // const isMonophonic = (instrument: Instrument): boolean =>{
 
 //   Monophonic.getDefaults();
-  
+
 
 // }
 
 // //Create PolySynth
- /*
-    PolySynth is not a synthesizer by itself, 
-    it merely manages voices of one of the other types of synths,
-    allowing any of the monophonic synthesizers to be polyphonic.
-    - Tonejs Docs
-  */
-export const createPolySynth = (instrument : PolyCompatibleSynth ) =>{
+/*
+   PolySynth is not a synthesizer by itself, 
+   it merely manages voices of one of the other types of synths,
+   allowing any of the monophonic synthesizers to be polyphonic.
+   - Tonejs Docs
+ */
+export const createPolySynth = (instrument: PolyCompatibleSynth) => {
 
   const polySynth = new Tone.PolySynth(instrument).toDestination();
 
