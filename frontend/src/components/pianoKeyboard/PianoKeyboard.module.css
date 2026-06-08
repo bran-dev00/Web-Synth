@@ -11,3 +11,26 @@
     justify-content: center;
     align-items: center;
 }
+
+.poly-toggle-btn {
+    min-width: 60px;
+    position: absolute;
+    top: -26px;
+    right: 0;
+    z-index: 10;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 3px 8px;
+    white-space: nowrap;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.poly-toggle-btn:hover {
+    color: var(--color-accent-light);
+    border-color: var(--color-accent);
+    background-color: rgba(8, 145, 178, 0.1);
+}

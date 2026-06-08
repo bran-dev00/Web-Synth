@@ -134,8 +134,9 @@ export const keyNoteMapByOctave = (octave: number) => {
 
   defaultPianoHotkeys.forEach((key, index) => {
     const noteName = noteNames[index % noteNames.length];
+    const noteOctave = index >= noteNames.length ? octave + 1 : octave;
     const note: Note = {
-      name: `${noteName}${octave}`,
+      name: `${noteName}${noteOctave}`,
       duration: "8n",
     };
     map.set(key, note);

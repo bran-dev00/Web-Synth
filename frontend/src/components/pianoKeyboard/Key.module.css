@@ -17,7 +17,7 @@
 }
 
 .key > button:hover {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-light);
   transition: ease-in-out 1ms color;
   color: white;
 }
@@ -37,7 +37,7 @@
 }
 
 .key > button.active {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-dark);
   color: white;
 }
 
