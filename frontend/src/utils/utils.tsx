@@ -168,3 +168,13 @@ export const createPolySynth = (instrument: PolyCompatibleSynth) => {
   return polySynth;
 
 }
+
+export const getPolyConstructor = (name: string): PolyCompatibleSynth | undefined => {
+  const map: Record<string, PolyCompatibleSynth | undefined> = {
+    Synth: Tone.Synth,
+    AMSynth: Tone.AMSynth,
+    FMSynth: Tone.FMSynth,
+    MonoSynth: Tone.MonoSynth,
+  };
+  return map[name];
+};

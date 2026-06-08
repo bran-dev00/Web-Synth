@@ -21,7 +21,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   numOctaves,
   endingOctave = startingOctave + (numOctaves - startingOctave),
 }) => {
-  const { synthRef, playNote, releaseNote, activeNoteNames, isPolyphonic, changeSynth } = useContext(SynthContext);
+  const { synthRef, playNote, releaseNote, activeNoteNames, polyphonicMode, canBePolyphonic, togglePolyphony } = useContext(SynthContext);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
@@ -29,10 +29,6 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
     startingOctave,
     endingOctave,
   );
-
-  const togglePolyphony = () => {
-    changeSynth(isPolyphonic ? "Synth" : "PolySynth");
-  };
 
   //flatten all octaves
   const allWhiteKeys = octaveGroups.flatMap((group) => group.whiteKeys);
@@ -80,7 +76,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   return (
     <div className={styles["container"]}>
       <div className={`${styles["piano-keyboard-layout"]} `}>
-        <button className={styles["poly-toggle-btn"]} onClick={togglePolyphony}>{isPolyphonic ? "Mono" : "Poly"}</button>
+        {canBePolyphonic && <button className={styles["poly-toggle-btn"]} onClick={togglePolyphony}>{polyphonicMode ? "Mono" : "Poly"}</button>}
         {allWhiteKeys.map((note: Note) => (
           <Key
             key={note.name}

@@ -1,12 +1,15 @@
-import React, { createContext, useState, useRef, useEffect } from "react";
+import React, { createContext, useState, useRef, useEffect, useMemo } from "react";
 import * as Tone from "tone";
 import { SynthInstance, Note, EffectType, SynthRef } from "../types/types";
+import { createPolySynth, getPolyConstructor } from "../utils/utils";
 
 
 export type SynthContextType = {
   synthRef: SynthRef;
   currentSynthType: string;
   isPolyphonic: boolean;
+  polyphonicMode: boolean;
+  canBePolyphonic: boolean;
   effectChain: EffectType[];
   activeNoteNames: string[];
   currentOctave: number;
@@ -16,6 +19,7 @@ export type SynthContextType = {
 
   updateOctave: (newOctave: number) => void;
   changeSynth: (newSynth: string) => void;
+  togglePolyphony: () => void;
   playNote: (synth: SynthInstance, note: Note) => void;
   releaseNote: (synth: SynthInstance, note: Note) => void;
   triggerAttackRelease: (synth: SynthInstance, note: Note) => void;
@@ -26,6 +30,8 @@ export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
   currentSynthType: "",
   isPolyphonic: false,
+  polyphonicMode: false,
+  canBePolyphonic: false,
   effectChain: [],
   activeNoteNames: [],
   currentOctave: 4, //default octave 
@@ -33,6 +39,7 @@ export const SynthContext = createContext<SynthContextType>({
   updateOctave: () => { },
   setEffectChain: () => { },
   changeSynth: () => { },
+  togglePolyphony: () => { },
   playNote: () => { },
   releaseNote: () => { },
   triggerAttackRelease: () => { },
@@ -52,6 +59,9 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
 
 
   const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
+  const [polyphonicMode, setPolyphonicMode] = useState<boolean>(false);
+  //Remembers old synth when toggling polyphony on, so it can be restored when toggling off
+  const [baseSynthName, setBaseSynthName] = useState<string | null>(null);
   const currentNotesPressed = useRef<string[]>([]);
   const [activeNoteNames, setActiveNoteNames] = useState<string[]>([]);
   const [currentOctave, setCurrentOctave] = useState<number>(4);
@@ -86,7 +96,46 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     setCurrentOctave(newOctave);
   }
 
+  const canBePolyphonic = useMemo(() => {
+    if (polyphonicMode) return true;
+    const name = synthRef.current?.name;
+    return !!getPolyConstructor(name || "");
+  }, [currentSynthType, polyphonicMode]);
+
+  const togglePolyphony = () => {
+    if (!synthRef?.current) return;
+
+    if (polyphonicMode) {
+      if (baseSynthName) {
+        changeSynth(baseSynthName);
+        setBaseSynthName(null);
+        setPolyphonicMode(false);
+      }
+      return;
+    }
+
+    const synthName = synthRef.current.name;
+    const constructor = getPolyConstructor(synthName);
+    if (!constructor) {
+      console.warn(`Synth type ${synthName} is not poly-compatible`);
+      return;
+    }
+
+    setBaseSynthName(
+      synthName === "PolySynth" ? (baseSynthName ?? "Synth") : synthName,
+    );
+
+    synthRef.current.dispose();
+    const polySynth = createPolySynth(constructor);
+    synthRef.current = polySynth;
+
+    setPolyphonicMode(true);
+  };
+
   const changeSynth = (newSynth: string) => {
+    setPolyphonicMode(false);
+    setBaseSynthName(null);
+
     if (synthRef?.current) {
       synthRef?.current.dispose();
 
@@ -194,6 +243,8 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     synthRef: synthRef,
     currentSynthType: currentSynthType,
     isPolyphonic: isPolyphonic,
+    polyphonicMode: polyphonicMode,
+    canBePolyphonic: canBePolyphonic,
     effectChain: effectChain,
     activeNoteNames: activeNoteNames,
     currentOctave: currentOctave,
@@ -201,6 +252,7 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     setEffectChain: setEffectChain,
     updateOctave: updateOctave,
     changeSynth: changeSynth,
+    togglePolyphony: togglePolyphony,
     playNote: playNote,
     releaseNote: releaseNote,
     triggerAttackRelease: triggerAttackRelease,
