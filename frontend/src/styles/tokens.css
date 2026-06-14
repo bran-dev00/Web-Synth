@@ -1,7 +1,10 @@
 :root{
     --color-background: #0f172a;
-    --color-surface: #1e293b;
+    --color-secondary-background: #6399DA;
+
+    --color-surface: #121F37;
     --color-surface-light: #334155;
+
     --color-text: #f1f5f9;
     --color-text-secondary: #cbd5e1;
     
@@ -11,10 +14,6 @@
     
     --color-secondary: #0c4a6e;
     --color-tertiary: #075985;
-    
-    /* Sidebar */
-    --color-sidebar-button: #2b4391;
-    --color-sidebar-button-hover: #3b82f6;
     
     /* Accent Colors - Teal */
     --color-accent: #0891b2;

@@ -1,6 +1,7 @@
 .synth-select{
     display: inline-block;
     margin-inline: .5rem;
+    max-width:200px;
 }
 
 select{

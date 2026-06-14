@@ -1,0 +1,64 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  flex-shrink: 0;
+  margin: 4px 12px;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px;
+  max-height: 1000px;
+  transition: max-height .2s ease;
+}
+
+.collapsed {
+  flex: none;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 12px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--color-border);
+  margin-top: auto;
+}
+
+.collapseButton {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.collapseButton:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+  background-color: var(--color-accent-dark);
+}

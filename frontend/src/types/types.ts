@@ -1,5 +1,11 @@
 import * as Tone from "tone";
 
+export interface PanelTypes{
+  effects: "Effects";
+  sequencer: "Sequencer";
+  synthPatch: "Synth Patch";
+}
+
 export interface Note {
   name: string;
   duration?: Tone.Unit.Time;
