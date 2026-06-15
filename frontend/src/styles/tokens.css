@@ -17,9 +17,17 @@
     
     /* Accent Colors - Teal */
     --color-accent: #0891b2;
+    --color-secondary-accent:#6793BF;
     --color-accent-light: #67e8f9;
     --color-accent-dark: #0e7490;
-    
+
+    /* Effect Modal */
+    --color-effects-modal-background:#17224B;
+    --color-effects-button: #6793BF;
+    --color-effects-button-hover: #4a6fa5;
+    --color-close-button-hover:#ef4444;
+
+
     /* Other */
     --color-success: #10b981;
     --color-warning: #f59e0b;

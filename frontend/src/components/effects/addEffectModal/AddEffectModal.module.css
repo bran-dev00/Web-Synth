@@ -1,5 +1,8 @@
 .close-button{
-    background-color: var(--color-background);
+    position:absolute;
+    right:30px;
+    top:5%;
+    background-color: var(--color-effects-button);
     border-radius: 4px;
     border: 1px solid var(--color-border);
     padding:8px;
@@ -9,25 +12,35 @@
 }
 
 .wrapper{
-    display:flex;
-    flex-direction: column;
-    align-items: center;
+    background-color:var(--color-effects-button);
+    padding:6px;
+    border-radius: 8px;
+    font-family: "Audiowide", "Inter", sans-serif;
+}
+
+.separator-line{
+    width:100%;
+    height:2px;
+    background-color:rgb(255, 255, 255);
+    stroke-linecap: round;
+
+}
+
+.background{
+    background-color:var(--color-effects-modal-background);
+    height:500px;
     padding:16px;
 }
 
 .header{
     display:flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items:center;
     width: 100%;
-    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-effects-modal-background);
+    border-bottom: 2px solid var(--color-effects-button);
 }
 
-.content{
-    width:100%;
-    margin:10px;
-    padding:8px;
-}
 
 .close-button:hover{
     background-color:var(--color-error);
@@ -36,34 +49,36 @@
 
 .buttons-wrapper{
     display:grid;
-    grid-template-columns: repeat(3,1fr);
-    gap:4px;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    padding-top: 4px;
 }
 
 .effect-button{
-    background-color: var(--color-background);
+    background-color: var(--color-effects-button);
     border-radius: 4px;
     border: 1px solid var(--color-border);
     padding: 16px;
     margin:2px;
     min-width: 100%;
     cursor: pointer;
+    /* box-shadow: 1px 3px 6px #103968; */
 }
 
 .effect-button:hover{
-    background-color: var(--color-primary);
+    background-color: var(--color-effects-button-hover);
 }
 
 ::backdrop{
-    background-color: rgba(19, 41, 87, 0.3);
-    filter:blur(4px);
+    background-color: rgba(23, 31, 49, 0.6);
+    filter:blur(8px);
 }
 
 :modal{
-  background-color: var(--color-background);
+  background-color: var(--color-effects-modal-background);
   border-radius: 8px;
   border:none;
-  min-width: 50vw;
+  min-width: 500px;
   max-width: 80vw;
   padding: 8px;
 }

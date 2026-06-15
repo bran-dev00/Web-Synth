@@ -19,12 +19,12 @@ const AddEffectModal = ({ dialogRef, closeDialog }: { dialogRef: React.Ref<HTMLD
                     <h2>Add Effect</h2>
                     <button className={styles["close-button"]} onClick={closeDialog}>✕</button>
                 </div>
+                {/* <div className={styles["separator-line"]}></div> */}
+                <div className={styles["background"]}>
 
-                <div className={styles["content"]} onClick={(e) => e.stopPropagation()}>
                     <div className={styles["buttons-wrapper"]}>
                         {effectsList.map((name) => (
-                            //TODO: Fix AddEffect Id's
-                            <button onClick={() => handleAddEffect(name)} className={styles["effect-button"]}> {name}</button>
+                            <button onClick={() => handleAddEffect(name)} className={styles["effect-button"]}>{name}</button>
                         ))}
                     </div>
 
