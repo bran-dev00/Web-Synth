@@ -9,8 +9,8 @@ select{
     font-weight: 500;
     font-size: 14px;
     border-radius: 6px;
-    border: 2px solid var(--color-accent);
-    background-color: var(--color-background);
+    border: 2px solid var(--color-secondary-white);
+    background-color: var(--color-secondary-accent);
     color: white;
     cursor: pointer;
     transition: all 200ms ease;
