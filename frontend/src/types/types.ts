@@ -1,10 +1,6 @@
 import * as Tone from "tone";
 
-export interface PanelTypes{
-  effects: "Effects";
-  sequencer: "Sequencer";
-  synthPatch: "Synth Patch";
-}
+export type PanelName = "Effects" | "Sequencer" | "Synth Patch";
 
 export interface Note {
   name: string;
