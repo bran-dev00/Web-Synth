@@ -36,6 +36,7 @@
     --color-warning: #f59e0b;
     --color-error: #ef4444;
     --color-border: #334155;
+    --color-muted: #7276ac9f;
 
     /* Gradients */
     --gradient-module-card: linear-gradient(135deg, #1e293b 0%, #0a2d5f 100%);

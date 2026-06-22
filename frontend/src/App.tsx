@@ -14,6 +14,7 @@ import Playground from "@/components/playground/Playground";
 import PianoKeyboardLayout from "./components/pianoKeyboard/PianoKeyboardLayout";
 import SynthSelect from "./components/shared/controls/SynthSelect";
 import Navbar from "./components/navbar/Navbar";
+import ToggleSwitch from "./components/shared/controls/ToggleSwitch";
 
 
 
@@ -59,6 +60,7 @@ function App() {
                 </div>) : <></>
               }
             </Panel>
+            {/* <ToggleSwitch /> */}
             <PianoKeyboardLayout numOctaves={5} />
           </main>
         </div>

@@ -7,6 +7,7 @@ import {
   getOctaveGroups,
   getBlackKeyOffset,
 } from "@/utils/utils.tsx";
+import ToggleSwitch from "../shared/controls/ToggleSwitch.tsx";
 
 interface PianoKeyboardLayoutProps {
   numOctaves: number;
@@ -76,7 +77,13 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   return (
     <div className={styles["container"]}>
       <div className={`${styles["piano-keyboard-layout"]} `}>
-        {canBePolyphonic && <button className={styles["poly-toggle-btn"]} onClick={togglePolyphony}>{polyphonicMode ? "Mono" : "Poly"}</button>}
+
+        {canBePolyphonic && (
+          <div className={styles["toggle-wrapper"]}>
+            <ToggleSwitch checked={polyphonicMode} label="polyphony" handleClick={togglePolyphony} />
+          </div>
+        )}
+
         {allWhiteKeys.map((note: Note) => (
           <Key
             key={note.name}

@@ -7,7 +7,6 @@ import { createPolySynth, getPolyConstructor } from "../utils/utils";
 export type SynthContextType = {
   synthRef: SynthRef;
   currentSynthType: string;
-  isPolyphonic: boolean;
   polyphonicMode: boolean;
   canBePolyphonic: boolean;
   effectChain: EffectType[];
@@ -20,6 +19,8 @@ export type SynthContextType = {
   updateOctave: (newOctave: number) => void;
   changeSynth: (newSynth: string) => void;
   togglePolyphony: () => void;
+  setPolyphonyOn: () => void;
+  setPolyphonyOff: () => void;
   playNote: (synth: SynthInstance, note: Note) => void;
   releaseNote: (synth: SynthInstance, note: Note) => void;
   triggerAttackRelease: (synth: SynthInstance, note: Note) => void;
@@ -29,7 +30,6 @@ export type SynthContextType = {
 export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
   currentSynthType: "",
-  isPolyphonic: false,
   polyphonicMode: false,
   canBePolyphonic: false,
   effectChain: [],
@@ -40,6 +40,8 @@ export const SynthContext = createContext<SynthContextType>({
   setEffectChain: () => { },
   changeSynth: () => { },
   togglePolyphony: () => { },
+  setPolyphonyOn: () => { },
+  setPolyphonyOff: () => { },
   playNote: () => { },
   releaseNote: () => { },
   triggerAttackRelease: () => { },
@@ -57,9 +59,9 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     synthRef.current?.name || "",
   );
 
-
-  const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
+  //The current State of the synths mode either poly on or off.
   const [polyphonicMode, setPolyphonicMode] = useState<boolean>(false);
+
   //Remembers old synth when toggling polyphony on, so it can be restored when toggling off
   const [baseSynthName, setBaseSynthName] = useState<string | null>(null);
   const currentNotesPressed = useRef<string[]>([]);
@@ -102,17 +104,8 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     return !!getPolyConstructor(name || "");
   }, [currentSynthType, polyphonicMode]);
 
-  const togglePolyphony = () => {
+  const setPolyphonyOn = () => {
     if (!synthRef?.current) return;
-
-    if (polyphonicMode) {
-      if (baseSynthName) {
-        changeSynth(baseSynthName);
-        setBaseSynthName(null);
-        setPolyphonicMode(false);
-      }
-      return;
-    }
 
     const synthName = synthRef.current.name;
     const constructor = getPolyConstructor(synthName);
@@ -132,6 +125,21 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     setPolyphonicMode(true);
   };
 
+  const setPolyphonyOff = () => {
+    if (!synthRef?.current) return;
+
+    const synthToRestore = baseSynthName ?? "Synth";
+    changeSynth(synthToRestore);
+  };
+
+  const togglePolyphony = () => {
+    if (polyphonicMode) {
+      setPolyphonyOff();
+    } else {
+      setPolyphonyOn();
+    }
+  };
+
   const changeSynth = (newSynth: string) => {
     setPolyphonicMode(false);
     setBaseSynthName(null);
@@ -141,57 +149,46 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
 
       switch (newSynth) {
         case "Synth":
-          setIsPolyphonic(false);
           setCurrentSynthType("Synth");
           synthRef.current = new Tone.Synth().toDestination();
           break;
         case "AMSynth":
-          setIsPolyphonic(true);
           setCurrentSynthType("AMSynth");
           synthRef.current = new Tone.AMSynth().toDestination();
           break;
         case "FMSynth":
-          setIsPolyphonic(true);
           setCurrentSynthType("FMSynth");
           synthRef.current = new Tone.FMSynth().toDestination();
           break;
         case "PolySynth":
-          setIsPolyphonic(true);
           setCurrentSynthType("PolySynth");
           synthRef.current = new Tone.PolySynth(Tone.AMSynth).toDestination();
           break;
         case "MonoSynth":
-          setIsPolyphonic(true);
           setCurrentSynthType("MonoSynth");
           synthRef.current = new Tone.MonoSynth().toDestination();
           break;
         case "MembraneSynth":
-          setIsPolyphonic(true);
           setCurrentSynthType("MembraneSynth");
           synthRef.current = new Tone.MembraneSynth().toDestination();
           break;
         case "PluckSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("PluckSynth");
           synthRef.current = new Tone.PluckSynth().toDestination();
           break;
         case "NoiseSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("NoiseSynth");
           synthRef.current = new Tone.NoiseSynth().toDestination();
           break;
         case "MetalSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("MetalSynth");
           synthRef.current = new Tone.MetalSynth().toDestination();
           break;
         case "DuoSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("DuoSynth");
           synthRef.current = new Tone.DuoSynth().toDestination();
           break;
         default:
-          setIsPolyphonic(false);
           setCurrentSynthType("Synth");
           synthRef.current = new Tone.Synth().toDestination();
           break;
@@ -242,7 +239,6 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   const synthValue: SynthContextType = {
     synthRef: synthRef,
     currentSynthType: currentSynthType,
-    isPolyphonic: isPolyphonic,
     polyphonicMode: polyphonicMode,
     canBePolyphonic: canBePolyphonic,
     effectChain: effectChain,
@@ -253,6 +249,8 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     updateOctave: updateOctave,
     changeSynth: changeSynth,
     togglePolyphony: togglePolyphony,
+    setPolyphonyOn: setPolyphonyOn,
+    setPolyphonyOff: setPolyphonyOff,
     playNote: playNote,
     releaseNote: releaseNote,
     triggerAttackRelease: triggerAttackRelease,
