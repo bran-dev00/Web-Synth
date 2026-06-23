@@ -1,16 +1,17 @@
-import styles from "./Navbar.module.css";
+import styles from "./PanelSidebar.module.css"
+
 import fxIcon from "@/assets/fx.svg";
 import pianoIcon from "@/assets/piano.svg";
 import sineIcon from "@/assets/sine.svg";
 import volumeIcon from "@/assets/volume.svg";
 import { PanelName } from "@/types/types";
 
-interface NavbarProps {
-    active: PanelTypes;
-    switchPanel: (panel: PanelTypes) => void;
+interface PanelSidebarProps {
+    active: PanelName;
+    switchPanel: (panel: PanelName) => void;
 }
 
-const Navbar = ({ active, switchPanel }: NavbarProps) => {
+const PanelSidebar = ({ active, switchPanel }: PanelSidebarProps) => {
 
     return (
         <nav className={styles["container"]}>
@@ -42,4 +43,4 @@ const Navbar = ({ active, switchPanel }: NavbarProps) => {
     )
 }
 
-export default Navbar
+export default PanelSidebar;

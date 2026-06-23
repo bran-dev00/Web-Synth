@@ -31,7 +31,7 @@
 }
 
 .panel-wrapper {
-    grid-column: 1 / -1;
+    grid-column: 2 / -2;
     margin: 20px;
 }
 
