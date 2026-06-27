@@ -162,9 +162,7 @@ export const keyNoteMapByOctave = (octave: number) => {
    - Tonejs Docs
  */
 export const createPolySynth = (instrument: PolyCompatibleSynth) => {
-
-  const polySynth = new Tone.PolySynth(instrument).toDestination();
-
+  const polySynth = new Tone.PolySynth(instrument);
   return polySynth;
 
 }

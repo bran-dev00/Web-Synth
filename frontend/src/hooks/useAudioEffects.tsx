@@ -5,7 +5,7 @@ import { useContext, useCallback } from "react";
 
 
 export const useAudioEffects = () => {
-  const { synthRef, effectChain, setEffectChain } = useContext(SynthContext);
+  const { synthRef, masterGainRef, effectChain, setEffectChain } = useContext(SynthContext);
 
   const createEffectInstance = useCallback((effectName: EffectTypeName): EffectInstance | null => {
     switch (effectName) {
@@ -75,13 +75,15 @@ export const useAudioEffects = () => {
         currentNode = effect.instance;
       }
 
-      currentNode.toDestination();
+      if (masterGainRef.current) {
+        currentNode.connect(masterGainRef.current);
+      }
 
       console.log("Effect added:", effectName, effectObj);
     } catch (error) {
       console.error("Error adding effect:", error);
     }
-  }, [synthRef, effectChain, createEffectInstance]);
+  }, [synthRef, masterGainRef, effectChain, createEffectInstance]);
 
   const removeEffect = useCallback((id: number) => {
     try {
@@ -104,8 +106,10 @@ export const useAudioEffects = () => {
       // Reconnect synth if there are no more effects
       if (!synthRef?.current) return;
 
+      if (!masterGainRef.current) return;
+
       if (newChain.length === 0) {
-        synthRef.current.toDestination();
+        synthRef.current.connect(masterGainRef.current);
       } else {
         // Reconnect the audio chain using the new chain
         synthRef.current.disconnect();
@@ -114,14 +118,14 @@ export const useAudioEffects = () => {
           currentNode.connect(effect.instance);
           currentNode = effect.instance;
         }
-        currentNode.toDestination();
+        currentNode.connect(masterGainRef.current);
       }
 
       console.log("Effect removed:", id);
     } catch (error) {
       console.error("Error removing effect:", error);
     }
-  }, [synthRef, effectChain]);
+  }, [synthRef, masterGainRef, effectChain]);
 
   const getActiveEffects = useCallback(() => {
     return effectChain;

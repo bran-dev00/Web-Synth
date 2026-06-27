@@ -6,15 +6,17 @@ import { createPolySynth, getPolyConstructor } from "../utils/utils";
 
 export type SynthContextType = {
   synthRef: SynthRef;
+  masterGainRef: React.RefObject<Tone.Gain | null>;
   currentSynthType: string;
   polyphonicMode: boolean;
   canBePolyphonic: boolean;
   effectChain: EffectType[];
   activeNoteNames: string[];
   currentOctave: number;
+  volume: number;
 
   setEffectChain: React.Dispatch<React.SetStateAction<EffectType[]>>;
-
+  setVolume: (volume: number) => void;
 
   updateOctave: (newOctave: number) => void;
   changeSynth: (newSynth: string) => void;
@@ -29,15 +31,18 @@ export type SynthContextType = {
 
 export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
+  masterGainRef: { current: null },
   currentSynthType: "",
   polyphonicMode: false,
   canBePolyphonic: false,
   effectChain: [],
   activeNoteNames: [],
-  currentOctave: 4, //default octave 
+  currentOctave: 4,
+  volume: 1,
 
-  updateOctave: () => { },
   setEffectChain: () => { },
+  setVolume: () => { },
+  updateOctave: () => { },
   changeSynth: () => { },
   togglePolyphony: () => { },
   setPolyphonyOn: () => { },
@@ -54,10 +59,13 @@ type SynthProviderProps = {
 
 export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   const synthRef = useRef<SynthInstance | null>(null);
+  const masterGainRef = useRef<Tone.Gain | null>(null);
 
   const [currentSynthType, setCurrentSynthType] = useState<string>(
     synthRef.current?.name || "",
   );
+
+  const [volume, setVolumeState] = useState<number>(1);
 
   //The current State of the synths mode either poly on or off.
   const [polyphonicMode, setPolyphonicMode] = useState<boolean>(false);
@@ -73,10 +81,13 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
 
   // const effects = new Map<EffectTypeName, EffectType[]>();
 
-  //Initialize synthRef on load/initial render
+  //Initialize synthRef and masterGainRef on load/initial render
   useEffect(() => {
     Tone.start();
-    const initialSynth = new Tone.Synth().toDestination();
+    const masterGain = new Tone.Gain(1).toDestination();
+    masterGainRef.current = masterGain;
+
+    const initialSynth = new Tone.Synth().connect(masterGain);
 
     synthRef.current = initialSynth;
     setCurrentSynthType(synthRef.current.name);
@@ -85,6 +96,9 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     return () => {
       if (synthRef?.current) {
         synthRef.current.dispose();
+      }
+      if (masterGainRef.current) {
+        masterGainRef.current.dispose();
       }
     };
   }, []);
@@ -96,6 +110,13 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     }
 
     setCurrentOctave(newOctave);
+  }
+
+  const setVolume = (newVolume: number) => {
+    setVolumeState(newVolume);
+    if (masterGainRef.current) {
+      masterGainRef.current.gain.value = newVolume;
+    }
   }
 
   const canBePolyphonic = useMemo(() => {
@@ -120,6 +141,9 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
 
     synthRef.current.dispose();
     const polySynth = createPolySynth(constructor);
+    if (masterGainRef.current) {
+      polySynth.connect(masterGainRef.current);
+    }
     synthRef.current = polySynth;
 
     setPolyphonicMode(true);
@@ -147,50 +171,53 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     if (synthRef?.current) {
       synthRef?.current.dispose();
 
+      const gainNode = masterGainRef.current;
+      if (!gainNode) return;
+
       switch (newSynth) {
         case "Synth":
           setCurrentSynthType("Synth");
-          synthRef.current = new Tone.Synth().toDestination();
+          synthRef.current = new Tone.Synth().connect(gainNode);
           break;
         case "AMSynth":
           setCurrentSynthType("AMSynth");
-          synthRef.current = new Tone.AMSynth().toDestination();
+          synthRef.current = new Tone.AMSynth().connect(gainNode);
           break;
         case "FMSynth":
           setCurrentSynthType("FMSynth");
-          synthRef.current = new Tone.FMSynth().toDestination();
+          synthRef.current = new Tone.FMSynth().connect(gainNode);
           break;
         case "PolySynth":
           setCurrentSynthType("PolySynth");
-          synthRef.current = new Tone.PolySynth(Tone.AMSynth).toDestination();
+          synthRef.current = new Tone.PolySynth(Tone.AMSynth).connect(gainNode);
           break;
         case "MonoSynth":
           setCurrentSynthType("MonoSynth");
-          synthRef.current = new Tone.MonoSynth().toDestination();
+          synthRef.current = new Tone.MonoSynth().connect(gainNode);
           break;
         case "MembraneSynth":
           setCurrentSynthType("MembraneSynth");
-          synthRef.current = new Tone.MembraneSynth().toDestination();
+          synthRef.current = new Tone.MembraneSynth().connect(gainNode);
           break;
         case "PluckSynth":
           setCurrentSynthType("PluckSynth");
-          synthRef.current = new Tone.PluckSynth().toDestination();
+          synthRef.current = new Tone.PluckSynth().connect(gainNode);
           break;
         case "NoiseSynth":
           setCurrentSynthType("NoiseSynth");
-          synthRef.current = new Tone.NoiseSynth().toDestination();
+          synthRef.current = new Tone.NoiseSynth().connect(gainNode);
           break;
         case "MetalSynth":
           setCurrentSynthType("MetalSynth");
-          synthRef.current = new Tone.MetalSynth().toDestination();
+          synthRef.current = new Tone.MetalSynth().connect(gainNode);
           break;
         case "DuoSynth":
           setCurrentSynthType("DuoSynth");
-          synthRef.current = new Tone.DuoSynth().toDestination();
+          synthRef.current = new Tone.DuoSynth().connect(gainNode);
           break;
         default:
           setCurrentSynthType("Synth");
-          synthRef.current = new Tone.Synth().toDestination();
+          synthRef.current = new Tone.Synth().connect(gainNode);
           break;
       }
     }
@@ -238,14 +265,17 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
   //Create the synthValue object that will be passed as the Context's value with everything initialized
   const synthValue: SynthContextType = {
     synthRef: synthRef,
+    masterGainRef: masterGainRef,
     currentSynthType: currentSynthType,
     polyphonicMode: polyphonicMode,
     canBePolyphonic: canBePolyphonic,
     effectChain: effectChain,
     activeNoteNames: activeNoteNames,
     currentOctave: currentOctave,
+    volume: volume,
 
     setEffectChain: setEffectChain,
+    setVolume: setVolume,
     updateOctave: updateOctave,
     changeSynth: changeSynth,
     togglePolyphony: togglePolyphony,
