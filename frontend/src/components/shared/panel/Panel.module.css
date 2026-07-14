@@ -1,50 +1,22 @@
 .container {
   background-color: var(--color-surface);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   margin: 10px;
   border-radius: 8px;
   width: 100%;
   overflow: hidden;
-  transition: max-height .35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .containerExpanded {
   min-height: 500px;
 }
 
-.bodyWrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  min-height: 0;
-}
-
-.sidebar {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  background-color: #21365F;
-  border-right: 1px solid var(--color-border);
-  min-width: 0;
-  transition: width 0.25s ease, opacity 0.2s ease, border-right-width 0.2s ease;
-}
-
-.sidebarCollapsed {
-  opacity: 0;
-  border-right-width: 0;
-  overflow: hidden;
-}
-
-.panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 .header {
+  grid-column: 1 / -1;
+  grid-row: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -60,15 +32,46 @@
   margin: 0;
 }
 
+.bodyWrapper {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #21365F;
+  border-right: 1px solid var(--color-border);
+  box-sizing: border-box;
+  width: fit-content;
+  min-height: 0;
+  transition: width 0.25s ease, border-right-width 0.2s ease;
+}
+
+.panel {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
 .content {
   flex: 1;
   min-height: 0;
   overflow: hidden;
   padding: 8px;
-  transition: opacity .2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .footer {
+  grid-column: 1 / -1;
+  grid-row: 3;
   display: flex;
   justify-content: flex-end;
   padding: 4px 32px 4px 12px;
@@ -91,4 +94,18 @@
   color: var(--color-text);
   border-color: var(--color-accent);
   background-color: var(--color-accent-dark);
+}
+
+.containerCollapsed {
+  grid-template-rows: auto 0fr auto;
+}
+
+.containerCollapsed .sidebar {
+  width: 0;
+  border-right-width: 0;
+  overflow: hidden;
+}
+
+.containerCollapsed .content {
+  opacity: 0;
 }
