@@ -12,6 +12,8 @@ export interface Key{
   active: Boolean;
 }
 
+export type KeyLabelType = "note" | "keyboard" | "none";
+
 export type SynthRef = React.RefObject<SynthInstance | null> | null;
 
 export type SynthInstance = 
@@ -96,3 +98,6 @@ export interface EffectSchema {
 export const isPolySynth = (synth: SynthInstance): synth is Tone.PolySynth =>{
   return synth instanceof Tone.PolySynth;
 }
+
+
+

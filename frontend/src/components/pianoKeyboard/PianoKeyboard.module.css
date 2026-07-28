@@ -1,7 +1,8 @@
 .piano-keyboard-layout{
     position:relative;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .container{
@@ -11,10 +12,53 @@
     align-items: center;
 }
 
-.toggle-wrapper {
-    position: absolute;
-    top: -34px;
-    right: 0;
-    z-index: 10;
-    font-size: 14px;
+.keyboard-settings {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 12px;
+}
+
+.keyboard-settings .label-text {
+    font-size: 1em;
+    color: var(--color-text-secondary);
+}
+
+.keys-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.control-label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}
+
+.label-toggle {
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.label-toggle:hover {
+    background: var(--color-surface-light);
+    border-color: var(--color-text-secondary);
 }

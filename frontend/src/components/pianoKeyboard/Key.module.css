@@ -48,4 +48,6 @@
 
 .label-center{
   margin:auto;
+  font-size: 10px;
+  white-space: nowrap;
 }

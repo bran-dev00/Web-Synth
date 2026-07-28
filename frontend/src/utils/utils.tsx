@@ -143,7 +143,21 @@ export const keyNoteMapByOctave = (octave: number) => {
   });
 
   return map;
-}
+};
+
+export const getNoteToKeyMap = (startOctave: number, endOctave: number): Map<string, string> => {
+  const map = new Map<string, string>();
+
+  for (let octave = startOctave; octave <= endOctave; octave++) {
+    defaultPianoHotkeys.forEach((key, index) => {
+      const noteName = noteNames[index % noteNames.length];
+      const noteOctave = index >= noteNames.length ? octave + 1 : octave;
+      map.set(`${noteName}${noteOctave}`, key);
+    });
+  }
+
+  return map;
+};
 
 
 // Check if instrument/synth is Monophonic

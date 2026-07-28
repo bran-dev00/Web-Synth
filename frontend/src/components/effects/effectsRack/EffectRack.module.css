@@ -1,5 +1,6 @@
 .container{
     display: flex;
+    height:95%;
     align-items: stretch;
     gap: 6px;
     padding: 8px;
@@ -15,6 +16,8 @@
     font-size: 14px;
     padding: 4px 8px;
     min-width: 100px;
+    min-height: fit-content;
+    height:40px;
     white-space: nowrap;
 }
 

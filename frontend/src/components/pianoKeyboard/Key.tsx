@@ -1,5 +1,4 @@
-import { Note, SynthInstance } from "../../types/types";
-import { useRef } from "react";
+import { Note, KeyLabelType } from "../../types/types";
 import styles from "./Key.module.css";
 
 interface KeyProps {
@@ -13,7 +12,8 @@ interface KeyProps {
   onMouseDrag: () => void;
 
   keyType: "white" | "black";
-  label?: boolean; // Optional Label on the key
+  labelType?: KeyLabelType;
+  keyboardKey?: string;
 }
 
 const Key: React.FC<KeyProps> = ({
@@ -23,10 +23,20 @@ const Key: React.FC<KeyProps> = ({
   onMouseLeave,
   note,
   keyType,
-  label,
+  labelType,
+  keyboardKey,
   isActive,
 }) => {
   const keyClass = `${keyType === "white" ? styles["white-key"] : styles["black-key"]} ${isActive ? styles["active"] : ""}`;
+  const labelClass = keyType === "white" ? styles["label-bottom"] : styles["label-center"];
+
+  const renderLabel = () => {
+    if (!labelType || labelType === "none" || keyType === "black") return null;
+    if (labelType === "keyboard") {
+      return keyboardKey ? <span className={labelClass}>{keyboardKey}</span> : null;
+    }
+    return <span className={labelClass}>{note.name}</span>;
+  };
 
   return (
     <>
@@ -38,7 +48,7 @@ const Key: React.FC<KeyProps> = ({
           onMouseEnter={onMouseDrag}
           className={keyClass}
         >
-          {label && <span className={keyType === "white" ? styles["label-bottom"] : styles["label-center"]}>{note.name}</span>}
+          {renderLabel()}
         </button>
       </div>
     </>
