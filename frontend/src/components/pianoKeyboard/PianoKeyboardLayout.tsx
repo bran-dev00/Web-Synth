@@ -8,6 +8,7 @@ import {
   getBlackKeyOffset,
   getNoteToKeyMap,
   noteNames,
+  defaultPianoHotkeys,
 } from "@/utils/utils.tsx";
 import ToggleSwitch from "../shared/controls/ToggleSwitch.tsx";
 
@@ -30,14 +31,11 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [labelType, setLabelType] = useState<KeyLabelType>("note");
 
-  const octaveGroups = getOctaveGroups(
-    startingOctave,
-    endingOctave,
-  );
+  const octaveGroups = getOctaveGroups(startingOctave, endingOctave);
 
   const noteToKeyMap = useMemo(
-    () => getNoteToKeyMap(startingOctave, endingOctave),
-    [startingOctave, endingOctave],
+    () => getNoteToKeyMap(currentOctave),
+    [currentOctave],
   );
 
   const cycleLabelType = () => {
@@ -47,17 +45,21 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
     });
   };
 
-  //flatten all octaves
   const allWhiteKeys = octaveGroups.flatMap((group) => group.whiteKeys);
 
-  const isInKeyboardRange = (noteName: string): boolean => {
+  // console.log("note to key map", noteToKeyMap);
+
+  const isKeyInCurrentOctave = (noteName: string): boolean => {
     const match = noteName.match(/(\d)$/);
     if (!match) return false;
+
     const octave = parseInt(match[1]);
     if (octave === currentOctave) return true;
+
+    //default keys extends a few notes after the end of a single octave
     if (octave === currentOctave + 1) {
       const noteBase = noteName.replace(/\d$/, "");
-      return noteNames.indexOf(noteBase) < 5; // C, C#, D, D#, E
+      return noteNames.indexOf(noteBase) < 6;
     }
     return false;
   };
@@ -68,6 +70,8 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
       playNote(synthRef.current, note);
     }
   };
+
+
 
   const handleMouseUp = (note: Note) => {
     if (synthRef?.current) {
@@ -104,14 +108,14 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
 
         <div className={styles["keyboard-settings"]}>
           <div className={styles["control-group"]}>
-            <span className={styles["control-label"]}>Labels:</span>
+            <span>Labels:</span>
             <button className={styles["label-toggle"]} onClick={cycleLabelType}>
               {labelType === "none" ? "none" : labelType}
             </button>
           </div>
           {canBePolyphonic && (
             <div className={styles["control-group"]}>
-              <ToggleSwitch checked={polyphonicMode} label="polyphony" handleClick={togglePolyphony} />
+              <ToggleSwitch checked={polyphonicMode} label="Polyphony" handleClick={togglePolyphony} />
             </div>
           )}
         </div>
@@ -128,7 +132,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
               keyType="white"
               note={note}
               labelType={labelType}
-              keyboardKey={isInKeyboardRange(note.name) ? noteToKeyMap.get(note.name) : undefined}
+              keyboardKey={isKeyInCurrentOctave(note.name) ? noteToKeyMap.get(note.name) : undefined}
             />
           ))}
 
@@ -144,6 +148,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
                     position: "absolute",
                     left: `${left}px`,
                     zIndex: 2,
+                    border: "none",
                   }}
                 >
                   <Key
@@ -155,7 +160,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
                     keyType="black"
                     note={note}
                     labelType={labelType}
-                    keyboardKey={isInKeyboardRange(note.name) ? noteToKeyMap.get(note.name) : undefined}
+                    keyboardKey={isKeyInCurrentOctave(note.name) ? noteToKeyMap.get(note.name) : undefined}
                   />
                 </div>
               );

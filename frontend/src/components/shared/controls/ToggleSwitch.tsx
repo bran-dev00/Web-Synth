@@ -8,7 +8,6 @@ interface ToggleSwitchProps {
 
 const ToggleSwitch = ({ checked, label, handleClick }: ToggleSwitchProps) => {
 
-
     return (
         <>
             <label className={styles["switch"]} onClick={handleClick} htmlFor="">

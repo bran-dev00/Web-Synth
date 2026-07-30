@@ -31,9 +31,9 @@ const Key: React.FC<KeyProps> = ({
   const labelClass = keyType === "white" ? styles["label-bottom"] : styles["label-center"];
 
   const renderLabel = () => {
-    if (!labelType || labelType === "none" || keyType === "black") return null;
+    if (!labelType || labelType === "none") return null;
     if (labelType === "keyboard") {
-      return keyboardKey ? <span className={labelClass}>{keyboardKey}</span> : null;
+      return keyboardKey ? <span className={labelClass}>{keyboardKey.toUpperCase()}</span> : null;
     }
     return <span className={labelClass}>{note.name}</span>;
   };

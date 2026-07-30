@@ -18,8 +18,7 @@ export const noteNames = [
   "B",
 ];
 
-export const defaultPianoHotkeys = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';'];
-
+export const defaultPianoHotkeys = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';', "'"];
 export const whiteKeyNames = ["C", "D", "E", "F", "G", "A", "B"];
 export const blackKeyNames = ["C#", "D#", "F#", "G#", "A#"];
 
@@ -34,9 +33,17 @@ export const blackKeyPositions = new Map([
 
 export const noteOctaves = [2, 3, 4, 5, 6, 7];
 
+export const isOctaveInBounds = (octave: number): boolean => {
+  if (octave < noteOctaves[0] || octave > noteOctaves[noteOctaves.length - 1]) {
+    console.error("starting octave is out of bounds");
+    return false;
+  }
+
+  return true;
+}
+
 export const getNotesByOctave = (start: number, end: number): Note[] => {
-  if (start < 2 || end > 6) {
-    console.error("octave is out of bounds");
+  if (!isOctaveInBounds(start) || !isOctaveInBounds(end)) {
     return [];
   }
 
@@ -59,8 +66,8 @@ export const getNotesByOctave = (start: number, end: number): Note[] => {
 };
 
 export const getOctaveGroups = (start: number, end: number) => {
-  if (start < 2 || end > 6) {
-    console.error("octaves out of bounds");
+
+  if (!isOctaveInBounds(start) || !isOctaveInBounds(end)) {
     return [];
   }
 
@@ -101,15 +108,13 @@ export const getBlackKeyOffset = (
   whiteKeyWidth: number = 50,
   octaveIndex: number = 0,
 ): number => {
-  const blackKeyWidth = whiteKeyWidth - 15;
 
+  const blackKeyWidth = whiteKeyWidth - 15;
   const blackKeyOffset = whiteKeyWidth - blackKeyWidth / 2;
 
-  //Just the note name
   const noteName = blackKeyNote.replace(/\d+$/, "");
 
   const whiteKeyPosition = blackKeyPositions.get(noteName);
-  // console.log("whiteKeyPosition: ", whiteKeyPosition);
 
   if (whiteKeyPosition === undefined) {
     console.error(`Invalid black Key: ${blackKeyNote}`);
@@ -125,7 +130,7 @@ export const getBlackKeyOffset = (
 
 
 export const keyNoteMapByOctave = (octave: number) => {
-  if (octave < 1 || octave > 7) {
+  if (!isOctaveInBounds(octave)) {
     console.error("octave is out of bounds");
     return new Map<string, Note>();
   }
@@ -145,30 +150,20 @@ export const keyNoteMapByOctave = (octave: number) => {
   return map;
 };
 
-export const getNoteToKeyMap = (startOctave: number, endOctave: number): Map<string, string> => {
+//returns a map of the corresponding hotekeys used for a note in a given octave
+export const getNoteToKeyMap = (octave: number): Map<string, string> => {
   const map = new Map<string, string>();
 
-  for (let octave = startOctave; octave <= endOctave; octave++) {
-    defaultPianoHotkeys.forEach((key, index) => {
-      const noteName = noteNames[index % noteNames.length];
-      const noteOctave = index >= noteNames.length ? octave + 1 : octave;
-      map.set(`${noteName}${noteOctave}`, key);
-    });
-  }
+  defaultPianoHotkeys.forEach((key, index) => {
+    const noteName = noteNames[index % noteNames.length];
+    const noteOctave = index >= noteNames.length ? octave + 1 : octave;
+    map.set(`${noteName}${noteOctave}`, key);
+  });
 
   return map;
 };
 
 
-// Check if instrument/synth is Monophonic
-// const isMonophonic = (instrument: Instrument): boolean =>{
-
-//   Monophonic.getDefaults();
-
-
-// }
-
-// //Create PolySynth
 /*
    PolySynth is not a synthesizer by itself, 
    it merely manages voices of one of the other types of synths,
@@ -178,7 +173,6 @@ export const getNoteToKeyMap = (startOctave: number, endOctave: number): Map<str
 export const createPolySynth = (instrument: PolyCompatibleSynth) => {
   const polySynth = new Tone.PolySynth(instrument);
   return polySynth;
-
 }
 
 export const getPolyConstructor = (name: string): PolyCompatibleSynth | undefined => {

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import * as Tone from "tone";
 import "./styles/layout.css"
 import "./App.css";
@@ -11,6 +11,7 @@ import Panel from "./components/shared/panel/Panel";
 
 import Playground from "@/components/playground/Playground";
 import PianoKeyboardLayout from "./components/pianoKeyboard/PianoKeyboardLayout";
+import HelpModal from "./components/shared/helpModal/HelpModal";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
 
   const [debugStatus, setDebugStatus] = useState<boolean>(false);
 
+  const helpDialogRef = useRef<HTMLDialogElement>(null);
 
   return (
     <>
@@ -45,6 +47,10 @@ function App() {
             />
             {/* <ToggleSwitch /> */}
             <PianoKeyboardLayout numOctaves={5} />
+            <button className={"help-popup"} onClick={() => helpDialogRef.current?.showModal()}>
+              ?
+            </button>
+            <HelpModal dialogRef={helpDialogRef} closeDialog={() => helpDialogRef.current?.close()} />
           </main>
         </div>
       </div>

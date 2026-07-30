@@ -27,13 +27,18 @@
   color: black;
   width: 50px;
   height: 200px;
+  border:1px solid var(--color-primary);
 }
 
 .black-key {
+  padding:4px;
   background-color: black;
   color: white;
   width: 30px;
   height: 130px;
+  justify-content: center;
+  align-items: center;
+  border:1px solid black;
 }
 
 .key > button.active {
@@ -48,6 +53,6 @@
 
 .label-center{
   margin:auto;
-  font-size: 10px;
+  font-size: 9px;
   white-space: nowrap;
 }
