@@ -5,29 +5,34 @@ import PanelSidebar from "./PanelSidebar";
 import { PanelName } from "@/types/types";
 
 interface PanelProps {
-  panels: Record<PanelName, React.ReactNode>
+  panels: Partial<Record<PanelName, React.ReactNode>>
+  headerActions?: Partial<Record<PanelName, React.ReactNode>>
   className?: string
   defaultCollapsed?: boolean
+  onToggleCollapse?: (collapsed: boolean) => void
 }
 
-const Panel = ({ panels, className, defaultCollapsed = false }: PanelProps) => {
+const Panel = ({ panels, headerActions, className, defaultCollapsed = false, onToggleCollapse }: PanelProps) => {
   const [activePanel, setActivePanel] = useState<PanelName>("Effects");
   const switchPanel = (panel: PanelName) => setActivePanel(panel);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
-  const toggleCollapse = () => setIsCollapsed(prev => !prev);
+  const toggleCollapse = () => setIsCollapsed(prev => { const next = !prev; onToggleCollapse?.(next); return next; });
 
   return (
     <div
       className={`${styles["container"]} ${!isCollapsed ? styles["containerExpanded"] : ""} ${isCollapsed ? styles["containerCollapsed"] : ""} ${className ?? ""}`}
     >
+      <div className={styles["sidebar"]}>
+        <PanelSidebar active={activePanel} switchPanel={switchPanel} />
+      </div>
       <div className={styles["header"]}>
-        <h2 className={styles["title"]}>{activePanel}</h2>
+        <div className={styles["headerLeft"]}>
+          <h2 className={styles["title"]}>{activePanel}</h2>
+          {headerActions?.[activePanel]}
+        </div>
         <SynthSelect />
       </div>
       <div className={styles["bodyWrapper"]}>
-        <div className={styles["sidebar"]}>
-          <PanelSidebar active={activePanel} switchPanel={switchPanel} />
-        </div>
         <section className={styles["panel"]}>
           <div className={styles["content"]}>
             {panels[activePanel]}

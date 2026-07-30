@@ -18,6 +18,7 @@ interface PianoKeyboardLayoutProps {
   numOctaves: number;
   startingOctave?: number;
   endingOctave?: number;
+  panelCollapsed?: boolean;
 }
 
 //Handles the 'piano keyboard' rendering and IO keyboard & mouse events 
@@ -25,6 +26,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   startingOctave = 2,
   numOctaves,
   endingOctave = startingOctave + (numOctaves - startingOctave),
+  panelCollapsed = false,
 }) => {
   const { synthRef, playNote, releaseNote, activeNoteNames, polyphonicMode, canBePolyphonic, togglePolyphony, currentOctave } = useContext(SynthContext);
 
@@ -103,7 +105,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
 
 
   return (
-    <div className={styles["container"]}>
+    <div className={`${styles["container"]} ${panelCollapsed ? styles["panelCollapsed"] : ""}`}>
       <div className={`${styles["piano-keyboard-layout"]} `}>
 
         <div className={styles["keyboard-settings"]}>

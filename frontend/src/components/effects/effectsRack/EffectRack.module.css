@@ -1,28 +1,9 @@
 .container{
     display: flex;
     height:95%;
-    align-items: stretch;
+    align-items: flex-start;
+    justify-content: flex-start;
     gap: 6px;
     padding: 8px;
     overflow: hidden;
-}
-
-.add-effects-button{
-    background-color: var(--color-background);
-    border: 1px dashed var(--color-border);
-    border-radius: 4px;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    font-size: 14px;
-    padding: 4px 8px;
-    min-width: 100px;
-    min-height: fit-content;
-    height:40px;
-    white-space: nowrap;
-}
-
-.add-effects-button:hover{
-    background-color: var(--color-secondary-accent);
-    color: var(--color-text);
-    border-color: var(--color-accent);
 }

@@ -61,3 +61,7 @@
     background: var(--color-surface-light);
     border-color: var(--color-text-secondary);
 }
+
+.panelCollapsed {
+    margin-top: -150px;
+}

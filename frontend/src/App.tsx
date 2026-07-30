@@ -6,6 +6,7 @@ import useKeyboardSynth from "./hooks/useKeyboardSynth";
 import { SynthContext } from "@/contexts/SynthContext";
 
 import EffectsRack from "./components/effects/effectsRack/EffectRack";
+import EffectsHeaderActions from "./components/effects/EffectsHeaderActions";
 import Panel from "./components/shared/panel/Panel";
 
 
@@ -29,6 +30,7 @@ function App() {
   }, [synthRef?.current]);
 
   const [debugStatus, setDebugStatus] = useState<boolean>(false);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
   const helpDialogRef = useRef<HTMLDialogElement>(null);
 
@@ -41,11 +43,15 @@ function App() {
               className="panel-wrapper"
               panels={{
                 "Effects": <EffectsRack />,
-                "Sequencer": <div><h1>Sequencer</h1></div>,
-                "Synth Patch": <div><h1>Synth Patch</h1></div>,
               }}
+              headerActions={{
+                "Effects": <EffectsHeaderActions />,
+              }}
+              onToggleCollapse={setIsPanelCollapsed}
             />
-            <PianoKeyboardLayout numOctaves={5} />
+
+            {/* numOctaves is exclusive */}
+            <PianoKeyboardLayout numOctaves={6} panelCollapsed={isPanelCollapsed} />
             <button className={"help-popup"} onClick={() => helpDialogRef.current?.showModal()}>
               ?
             </button>
