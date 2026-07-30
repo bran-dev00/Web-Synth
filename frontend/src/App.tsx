@@ -45,7 +45,6 @@ function App() {
                 "Synth Patch": <div><h1>Synth Patch</h1></div>,
               }}
             />
-            {/* <ToggleSwitch /> */}
             <PianoKeyboardLayout numOctaves={5} />
             <button className={"help-popup"} onClick={() => helpDialogRef.current?.showModal()}>
               ?

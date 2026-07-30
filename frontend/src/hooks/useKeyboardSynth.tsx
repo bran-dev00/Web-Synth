@@ -25,7 +25,7 @@ const handleKeyDown = (
 
   if (e.shiftKey && e.key === "ArrowDown") {
     e.preventDefault();
-    if (currentOctave <= 1) {
+    if (currentOctave <= 2) {
       console.warn("Already at minimum octave. Cannot shift down.");
       return;
     }

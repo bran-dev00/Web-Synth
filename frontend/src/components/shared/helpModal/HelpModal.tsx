@@ -12,7 +12,7 @@ const HelpModal = ({ dialogRef, closeDialog }: { dialogRef: React.Ref<HTMLDialog
                 <div className={styles["background"]}>
                     <div className={styles["help-section"]}>
                         <h3>Labels</h3>
-                        <p>Cycles through label modes on the piano keys: note names (C, D, E...), keyboard keys (A, S, D...), or none.</p>
+                        <p>Cycles through label modes on the piano keys: note names (C3, C3#, D3...), keyboard keys (A, S, D...), or none.</p>
                     </div>
                     <div className={styles["help-section"]}>
                         <h3>Polyphony</h3>
@@ -20,7 +20,7 @@ const HelpModal = ({ dialogRef, closeDialog }: { dialogRef: React.Ref<HTMLDialog
                     </div>
                     <div className={styles["help-section"]}>
                         <h3>Octave Switching</h3>
-                        <p>Press <kbd>Shift</kbd> + <kbd>↑</kbd> or <kbd>Shift</kbd> + <kbd>↓</kbd> to raise or lower the current octave (range: 1-7).</p>
+                        <p>Press <kbd>Shift</kbd> + <kbd>↑</kbd> or <kbd>Shift</kbd> + <kbd>↓</kbd> to raise or lower the current octave.</p>
                     </div>
                 </div>
             </div>
