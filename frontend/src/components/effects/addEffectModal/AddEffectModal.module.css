@@ -69,16 +69,6 @@
     background-color: var(--color-effects-button-hover);
 }
 
-::backdrop{
-    background-color: rgba(23, 31, 49, 0.6);
-    filter:blur(8px);
-}
-
-:modal{
-  background-color: var(--color-effects-modal-background);
-  border-radius: 8px;
-  border:none;
+.overlay{
   min-width: 500px;
-  max-width: 80vw;
-  padding: 8px;
 }

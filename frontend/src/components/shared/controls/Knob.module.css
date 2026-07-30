@@ -21,7 +21,7 @@
 .knob-track-active{
     stroke-linecap: round;
     fill: none;
-    stroke: var(--color-accent);
+    stroke: var(--knob-fill);
     cursor:grab;
 }
 

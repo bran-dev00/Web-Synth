@@ -9,8 +9,8 @@ interface EffectModuleProps {
 
 const EffectModule = (props: EffectModuleProps) => {
     const effect = props.effect;
-    const effectInstance = effect.instance;
-    console.log("Effect Instance", effect.effectTypeName, effectInstance.get());
+    // const effectInstance = effect.instance;
+    // console.log("Effect Instance", effect.effectTypeName, effectInstance.get());
 
     const { removeEffect } = useAudioEffects();
 

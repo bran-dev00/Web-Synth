@@ -18,8 +18,6 @@
     /* Accent Colors - Teal */
     --color-accent: #0891b2;
     --color-secondary-accent:#6793BF;
-    --color-accent-light: #67e8f9;
-    --color-accent-dark: #0e7490;
 
     /* Effect Modal */
     --color-effects-modal-background:#17224B;
@@ -42,8 +40,10 @@
     --gradient-module-card: linear-gradient(135deg, #1e293b 0%, #0a2d5f 100%);
 
     /* Knob */
-    --knob-base: rgba(27, 34, 90, 0.548);
-    --knob-track: rgba(255, 255, 255, 0.39);
+    --knob-base: rgba(13, 16, 43, 0.548);
+    --knob-track: rgba(255, 255, 255, 0.877);
     --knob-dot-outer: #5862eb;
+    --knob-fill:#077df3;
+    --knob-focus:#077df3;
 
 }

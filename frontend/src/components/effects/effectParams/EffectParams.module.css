@@ -38,7 +38,7 @@ input[type="range"] {
 }
 
 .value-input:focus {
-  border-color: var(--color-accent);
+  border-color: var(--knob-focus);
 }
 
 .range-hint {

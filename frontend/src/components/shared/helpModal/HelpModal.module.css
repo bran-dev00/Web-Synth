@@ -67,17 +67,8 @@ kbd{
     font-family: "Audiowide", "Inter", sans-serif;
 }
 
-::backdrop{
-    background-color: rgba(23, 31, 49, 0.6);
-    filter:blur(8px);
+.overlay{
+  bottom: 35vh;
+  min-width: 400px;
 }
 
-:modal{
-  background-color: var(--color-effects-modal-background);
-  border-radius: 8px;
-  border:none;
-  min-width: 400px;
-  max-width: 80vw;
-  padding: 8px;
-  bottom:35vh;
-}
