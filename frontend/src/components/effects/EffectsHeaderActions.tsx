@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import styles from "./EffectsHeaderActions.module.css"
 import AddEffectModal from "./addEffectModal/AddEffectModal";
 
 const EffectsHeaderActions = () => {
@@ -18,7 +19,7 @@ const EffectsHeaderActions = () => {
 
     return (
         <>
-            <button onClick={openDialog}>+ Add Effect</button>
+            <button className={styles["addButton"]} onClick={openDialog}>+ Add Effect</button>
             <AddEffectModal dialogRef={dialogRef} closeDialog={closeDialog} />
         </>
     );
