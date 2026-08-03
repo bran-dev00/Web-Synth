@@ -1,6 +1,15 @@
+import React from "react";
 import * as Tone from "tone";
 
-export type PanelName = "Effects" | "Sequencer" | "Synth Patch";
+//Extend later as we implement more panels
+export type PanelName = "Effects";
+
+export interface PanelType {
+  name: PanelName;
+  icon: string;
+  description: string;
+  content: React.ReactNode | React.ComponentType | null;
+}
 
 export interface Note {
   name: string;

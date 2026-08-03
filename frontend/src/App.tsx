@@ -4,9 +4,11 @@ import "./styles/layout.css"
 import "./App.css";
 import useKeyboardSynth from "./hooks/useKeyboardSynth";
 import { SynthContext } from "@/contexts/SynthContext";
+import { PanelType } from "./types/types";
+import { panels } from "./data/Panels.ts";
 
 import EffectsRack from "./components/effects/effectsRack/EffectRack";
-import EffectsHeaderActions from "./components/effects/EffectsHeaderActions";
+import EffectsHeaderActions from "./components/effects/effectsRack/EffectsHeaderActions";
 import Panel from "./components/shared/panel/Panel";
 
 
@@ -34,6 +36,7 @@ function App() {
 
   const helpDialogRef = useRef<HTMLDialogElement>(null);
 
+
   return (
     <>
       <div className="background">
@@ -41,9 +44,7 @@ function App() {
           <main className="main-content">
             <Panel
               className="panel-wrapper"
-              panels={{
-                "Effects": <EffectsRack />,
-              }}
+              panels={panels}
               headerActions={{
                 "Effects": <EffectsHeaderActions />,
               }}

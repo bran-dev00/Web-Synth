@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import styles from "./EffectsHeaderActions.module.css"
-import AddEffectModal from "./addEffectModal/AddEffectModal";
+import AddEffectModal from "../addEffectModal/AddEffectModal";
 
 const EffectsHeaderActions = () => {
     const dialogRef = useRef<HTMLDialogElement | null>(null);

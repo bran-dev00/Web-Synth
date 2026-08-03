@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect, useContext } from "react";
-import styles from "./PanelSidebar.module.css"
+import styles from "./PanelSidebar.module.css";
 
-import fxIcon from "@/assets/fx.svg";
-import pianoIcon from "@/assets/piano.svg";
-import sineIcon from "@/assets/sine.svg";
 import volumeIcon from "@/assets/volume.svg";
+
+import { panels } from "@/data/Panels";
 import { PanelName } from "@/types/types";
 import { SynthContext } from "@/contexts/SynthContext";
+import SidebarButton from "./SidebarButton";
 
 interface PanelSidebarProps {
     active: PanelName;
@@ -31,28 +31,18 @@ const PanelSidebar = ({ active, switchPanel }: PanelSidebarProps) => {
     return (
         <nav className={styles["container"]}>
             <div className={styles["nav-top"]}>
-                <button
-                    className={`${styles["nav-button"]} ${active === "Effects" ? styles["active"] : ""}`}
-                    onClick={() => switchPanel("Effects")}
-                    title="Effects — add audio effects to your signal"
-                >
-                    <img src={fxIcon} alt="Effects" />
-                </button>
-                <button
-                    className={`${styles["nav-button"]} ${active === "Sequencer" ? styles["active"] : ""}`}
-                    onClick={() => switchPanel("Sequencer")}
-                    title="Sequencer — create note sequences"
-                >
-                    <img src={pianoIcon} alt="Sequencer" />
-                </button>
-                <button
-                    className={`${styles["nav-button"]} ${active === "Synth Patch" ? styles["active"] : ""}`}
-                    onClick={() => switchPanel("Synth Patch")}
-                    title="Synth Patch — configure oscillator and synth parameters"
-                >
-                    <img src={sineIcon} alt="Synth Patch" />
-                </button>
+                {Object.values(panels).map((panel) => (
+                    <SidebarButton
+                        key={panel.name}
+                        panelName={panel.name}
+                        icon={panel.icon}
+                        description={panel.description}
+                        active={active === panel.name}
+                        switchPanel={switchPanel}
+                    />
+                ))}
             </div>
+
             <div className={styles["volume-wrapper"]} ref={volumeWrapperRef}>
                 <button
                     className={styles["nav-button"]}
