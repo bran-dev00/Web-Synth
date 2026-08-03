@@ -35,6 +35,7 @@ const handleKeyDown = (
 
   const note = keyNoteMapByOctave(currentOctave).get(e.key.toLowerCase());
   if (note) {
+    e.preventDefault();
     playNote(synthRef, note);
   }
 };
@@ -50,6 +51,7 @@ const handleKeyUp = (
     const note = keyNoteMapByOctave(currentOctave).get(e.key.toLowerCase());
 
     if (note) {
+      e.preventDefault();
       releaseNote(synthRef, note);
     }
   }
