@@ -1,74 +1,93 @@
-.close-button{
-    position:absolute;
-    right:30px;
-    top:5%;
+.close-button {
+    position: absolute;
+    right: 30px;
+    top: 5%;
     background-color: var(--color-effects-button);
     border-radius: 4px;
     border: 1px solid var(--color-border);
-    padding:8px;
+    padding: 8px;
     margin-bottom: 1rem;
-    transition: all .3s ease;
-    height:fit-content;
+    transition: all 0.3s ease;
+    height: fit-content;
 }
 
-.wrapper{
-    background-color:var(--color-effects-button);
-    padding:6px;
+.wrapper {
+    background-color: var(--color-effects-button);
+    padding: 6px;
     border-radius: 8px;
     font-family: "Inter", sans-serif;
 }
 
-.background{
-    background-color:var(--color-effects-modal-background);
-    padding:16px;
+.background {
+    background-color: var(--color-effects-modal-background);
+    padding: 16px;
 }
 
-.header{
-    display:flex;
+.header {
+    display: flex;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     width: 100%;
     background-color: var(--color-effects-modal-background);
     border-bottom: 2px solid var(--color-effects-button);
 }
 
-.close-button:hover{
-    background-color:var(--color-error);
-    cursor:pointer;
+.close-button:hover {
+    background-color: var(--color-error);
+    cursor: pointer;
 }
 
-.help-section{
-    margin-bottom:16px;
+.help-section {
+    margin-bottom: 16px;
 }
 
-.help-section:last-child{
-    margin-bottom:0;
+.help-section:last-child {
+    margin-bottom: 0;
 }
 
-.help-section h3{
-    margin:0 0 8px 0;
+.help-section h3 {
+    margin: 0 0 8px 0;
     color: var(--color-accent-light);
     font-size: 1rem;
 }
 
-.help-section p{
-    margin:0;
+.help-section p {
+    margin: 0;
     color: var(--color-text-secondary);
     font-size: 0.85rem;
     line-height: 1.5;
 }
 
-kbd{
+kbd {
     background-color: var(--color-surface-light);
     border: 1px solid var(--color-border);
     border-radius: 3px;
-    padding:2px 6px;
+    padding: 2px 6px;
     font-size: 0.8rem;
     font-family: "Audiowide", "Inter", sans-serif;
 }
 
-.overlay{
-  bottom: 35vh;
-  min-width: 400px;
+.overlay {
+    bottom: 35vh;
+    min-width: 400px;
 }
 
+@media (max-width: var(--bp-md)) {
+    .overlay {
+        min-width: unset;
+        width: 90vw;
+        max-width: 400px;
+        bottom: auto;
+    }
+
+    .close-button {
+        right: 12px;
+        top: 12px;
+    }
+}
+
+@media (max-width: var(--bp-sm)) {
+    .overlay {
+        width: 95vw;
+    }
+}

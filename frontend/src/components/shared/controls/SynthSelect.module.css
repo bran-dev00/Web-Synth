@@ -1,10 +1,10 @@
-.synth-select{
+.synth-select {
     display: inline-block;
-    margin-inline: .5rem;
-    max-width:200px;
+    margin-inline: 0.5rem;
+    max-width: 200px;
 }
 
-select{
+select {
     padding: 8px 12px;
     font-weight: 500;
     font-size: 14px;
@@ -23,20 +23,32 @@ select{
     padding-right: 36px;
 }
 
-select:hover{
+select:hover {
     background-color: var(--color-accent-dark);
     border-color: var(--color-accent-light);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-select:focus{
+select:focus {
     outline: none;
     border-color: var(--color-accent-light);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     background-color: var(--color-accent-dark);
 }
 
-option{
+@media (max-width: var(--bp-sm)) {
+    .synth-select {
+        max-width: 100%;
+        margin-inline: 0;
+    }
+
+    select {
+        min-width: unset;
+        width: 100%;
+    }
+}
+
+option {
     padding: 8px;
     background-color: var(--color-accent);
     color: white;

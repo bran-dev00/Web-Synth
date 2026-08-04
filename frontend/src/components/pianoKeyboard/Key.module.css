@@ -1,58 +1,66 @@
 .key > button {
-  border-radius: 0.5rem;
-  font-weight: bold;
-  font-size: var(--font-size-sm);
+    border-radius: 0.5rem;
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    touch-action: manipulation;
 
-  border-right: 1px solid rgba(0, 0, 0, 0.75);
+    border-right: 1px solid rgba(0, 0, 0, 0.75);
 
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-  cursor: pointer;
-  /* box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.25); */
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    cursor: pointer;
+    /* box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.25); */
 
-  text-align: center;
+    text-align: center;
 
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .key > button:hover {
-  background-color: var(--color-primary-light);
-  transition: ease-in-out 1ms color;
-  color: white;
+    background-color: var(--color-primary-light);
+    transition: ease-in-out 1ms color;
+    color: white;
 }
 
 .white-key {
-  background-color: white;
-  color: black;
-  width: 50px;
-  height: 200px;
-  border:1px solid var(--color-primary);
+    background-color: white;
+    color: black;
+    width: var(--white-key-width, 50px);
+    height: var(--white-key-height, 200px);
+    border: 1px solid var(--color-primary);
 }
 
 .black-key {
-  padding:4px;
-  background-color: black;
-  color: white;
-  width: 30px;
-  height: 130px;
-  justify-content: center;
-  align-items: center;
-  border:1px solid black;
+    padding: 4px;
+    background-color: black;
+    color: white;
+    width: var(--black-key-width, 30px);
+    height: var(--black-key-height, 130px);
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
 }
 
 .key > button.active {
-  background-color: var(--color-primary-dark);
-  color: white;
+    background-color: var(--color-primary-dark);
+    color: white;
 }
 
-.label-bottom{
-  margin-top:auto;
-  padding-bottom: 8px;
+.label-bottom {
+    margin-top: auto;
+    padding-bottom: 8px;
 }
 
-.label-center{
-  margin:auto;
-  font-size: 9px;
-  white-space: nowrap;
+.label-center {
+    margin: auto;
+    font-size: clamp(7px, 2vw, 9px);
+    white-space: nowrap;
+}
+
+@media (max-width: var(--bp-sm)) {
+    .label-bottom {
+        font-size: 8px;
+        padding-bottom: 4px;
+    }
 }

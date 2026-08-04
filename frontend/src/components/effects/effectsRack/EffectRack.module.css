@@ -5,5 +5,9 @@
     justify-content: flex-start;
     gap: 6px;
     padding: 8px;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
 }

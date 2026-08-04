@@ -2,38 +2,53 @@
     background-color: var(--color-background);
 }
 
-.help-popup{
-    position:fixed;
-    bottom:35px;
-    right:35px;
-    background-color:var(--color-surface);
-    width:35px;
-    height:35px;
+.help-popup {
+    position: fixed;
+    bottom: 35px;
+    right: 35px;
+    background-color: var(--color-surface);
+    width: 35px;
+    height: 35px;
     border-radius: 4px;
-    border:1px solid var(--color-accent);
-    padding:8px;
+    border: 1px solid var(--color-accent);
+    padding: 8px;
     text-align: center;
     display: flex;
-    justify-content:center;
-    align-items:center;
-    z-index:100;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
     cursor: pointer;
-    transition: all .1s ease-in-out;
+    transition: all 0.1s ease-in-out;
 }
 
-.help-popup:hover{
+.help-popup:hover {
     background-color: var(--color-primary);
 }
 
-::backdrop{
+::backdrop {
     background-color: rgba(23, 31, 49, 0.6);
-    filter:blur(8px);
+    filter: blur(8px);
 }
 
-:modal{
-  background-color: var(--color-effects-modal-background);
-  border-radius: 8px;
-  border:none;
-  max-width: 80vw;
-  padding: 8px;
+:modal {
+    background-color: var(--color-effects-modal-background);
+    border-radius: 8px;
+    border: none;
+    max-width: 80vw;
+    padding: 8px;
+}
+
+@media (max-width: var(--bp-sm)) {
+    .help-popup {
+        bottom: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+    }
+
+    :modal {
+        max-width: 95vw;
+        padding: 4px;
+    }
 }

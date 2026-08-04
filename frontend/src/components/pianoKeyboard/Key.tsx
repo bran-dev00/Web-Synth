@@ -46,6 +46,14 @@ const Key: React.FC<KeyProps> = ({
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
           onMouseEnter={onMouseDrag}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            onMouseDown();
+          }}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            onMouseUp();
+          }}
           className={keyClass}
         >
           {renderLabel()}

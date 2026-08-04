@@ -1,14 +1,13 @@
 import Key from "./Key.tsx";
 import styles from "./PianoKeyboard.module.css"
 import { SynthContext } from "@/contexts/SynthContext.tsx";
-import { useMemo, useState, useContext } from "react";
+import { useMemo, useState, useContext, useRef, useEffect, useCallback } from "react";
 import { Note, KeyLabelType } from "@/types/types";
 import {
   getOctaveGroups,
   getBlackKeyOffset,
   getNoteToKeyMap,
   noteNames,
-  defaultPianoHotkeys,
 } from "@/utils/utils.tsx";
 import ToggleSwitch from "../shared/controls/ToggleSwitch.tsx";
 
@@ -32,8 +31,46 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [labelType, setLabelType] = useState<KeyLabelType>("note");
+  const keysWrapperRef = useRef<HTMLDivElement>(null);
+  const keysContainerRef = useRef<HTMLDivElement>(null);
+  const [whiteKeyWidth, setWhiteKeyWidth] = useState(50);
+  const [visibleOctaves, setVisibleOctaves] = useState(1);
 
-  const octaveGroups = getOctaveGroups(startingOctave, endingOctave);
+  const maxOctaves = Math.max(1, numOctaves);
+  const computedEndingOctave = endingOctave ?? startingOctave + maxOctaves - 1;
+
+  const updateLayout = useCallback(() => {
+    const wrapper = keysWrapperRef.current;
+    if (!wrapper) return;
+
+    const width = wrapper.getBoundingClientRect().width;
+    if (width <= 0) return;
+
+    const minWhiteKeyWidth = 40;
+    const candidateOctaves = Math.floor(width / (minWhiteKeyWidth * 7));
+    const newVisibleOctaves = Math.max(1, Math.min(maxOctaves, candidateOctaves || 1));
+    const newWhiteKeyWidth = width / (newVisibleOctaves * 7);
+
+    setVisibleOctaves(newVisibleOctaves);
+    setWhiteKeyWidth(newWhiteKeyWidth);
+  }, [maxOctaves]);
+
+  useEffect(() => {
+    updateLayout();
+    const container = keysContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(updateLayout);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [updateLayout]);
+
+  const octaveGroups = useMemo(
+    () => getOctaveGroups(startingOctave, computedEndingOctave),
+    [startingOctave, computedEndingOctave],
+  );
+
+  const displayOctaveGroups = octaveGroups.slice(0, visibleOctaves);
 
   const noteToKeyMap = useMemo(
     () => getNoteToKeyMap(currentOctave),
@@ -47,7 +84,8 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
     });
   };
 
-  const allWhiteKeys = octaveGroups.flatMap((group) => group.whiteKeys);
+  const allWhiteKeys = displayOctaveGroups.flatMap((group) => group.whiteKeys);
+  const keyboardWidth = whiteKeyWidth * allWhiteKeys.length;
 
   // console.log("note to key map", noteToKeyMap);
 
@@ -108,7 +146,7 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
     <div className={`${styles["container"]} ${panelCollapsed ? styles["panelCollapsed"] : ""}`}>
       <div className={`${styles["piano-keyboard-layout"]} `}>
 
-        <div className={styles["keyboard-settings"]}>
+        <div className={styles["keyboard-settings"]} style={{ width: keyboardWidth ? `${keyboardWidth}px` : "100%" }}>
           <div className={styles["control-group"]}>
             <span>Labels:</span>
             <button className={styles["label-toggle"]} onClick={cycleLabelType}>
@@ -122,52 +160,51 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
           )}
         </div>
 
-        <div className={styles["keys-container"]}>
-          {allWhiteKeys.map((note: Note) => (
-            <Key
-              key={note.name}
-              isActive={activeNoteNames.includes(note.name)}
-              onMouseUp={() => handleMouseUp(note)}
-              onMouseDown={() => handleMouseDown(note)}
-              onMouseDrag={() => handleMouseDragging(note)}
-              onMouseLeave={() => handleMouseLeave(note)}
-              keyType="white"
-              note={note}
-              labelType={labelType}
-              keyboardKey={isKeyInCurrentOctave(note.name) ? noteToKeyMap.get(note.name) : undefined}
-            />
-          ))}
+        <div className={styles["keys-scroll"]} ref={keysWrapperRef}>
+          <div className={styles["keys-container"]} ref={keysContainerRef} style={{ width: `${keyboardWidth}px`, "--white-key-width": `${whiteKeyWidth}px` } as React.CSSProperties}>
+            {allWhiteKeys.map((note: Note) => (
+              <Key
+                key={note.name}
+                isActive={activeNoteNames.includes(note.name)}
+                onMouseUp={() => handleMouseUp(note)}
+                onMouseDown={() => handleMouseDown(note)}
+                onMouseDrag={() => handleMouseDragging(note)}
+                onMouseLeave={() => handleMouseLeave(note)}
+                keyType="white"
+                note={note}
+                labelType={labelType}
+                keyboardKey={isKeyInCurrentOctave(note.name) ? noteToKeyMap.get(note.name) : undefined}
+              />
+            ))}
 
-          {/* Render black keys with proper positioning */}
-          {octaveGroups.map((octaveGroup, octaveIndex) =>
-            octaveGroup.blackKeys.map((note: Note) => {
-              const left = getBlackKeyOffset(note.name, 50, octaveIndex);
+            {/* Render black keys with proper positioning */}
+            {displayOctaveGroups.map((octaveGroup, octaveIndex) =>
+              octaveGroup.blackKeys.map((note: Note) => {
+                const left = getBlackKeyOffset(note.name, whiteKeyWidth, octaveIndex);
+                const blackKeyWidth = Math.max(15, whiteKeyWidth - 15);
 
-              return (
-                <div
-                  key={note.name}
-                  style={{
-                    position: "absolute",
-                    left: `${left}px`,
-                    zIndex: 2,
-                    border: "none",
-                  }}
-                >
-                  <Key
-                    isActive={activeNoteNames.includes(note.name)}
-                    onMouseUp={() => handleMouseUp(note)}
-                    onMouseDown={() => handleMouseDown(note)}
-                    onMouseDrag={() => handleMouseDragging(note)}
-                    onMouseLeave={() => handleMouseLeave(note)}
-                    keyType="black"
-                    note={note}
-                    labelType={labelType}
-                    keyboardKey={isKeyInCurrentOctave(note.name) ? noteToKeyMap.get(note.name) : undefined}
-                  />
-                </div>
-              );
-            }),
-          )}
+                return (
+                  <div
+                    key={note.name}
+                    className={styles["black-key-wrapper"]}
+                    style={{ left: `${left}px`, width: `${blackKeyWidth}px` }}
+                  >
+                    <Key
+                      isActive={activeNoteNames.includes(note.name)}
+                      onMouseUp={() => handleMouseUp(note)}
+                      onMouseDown={() => handleMouseDown(note)}
+                      onMouseDrag={() => handleMouseDragging(note)}
+                      onMouseLeave={() => handleMouseLeave(note)}
+                      keyType="black"
+                      note={note}
+                      labelType={labelType}
+                      keyboardKey={isKeyInCurrentOctave(note.name) ? noteToKeyMap.get(note.name) : undefined}
+                    />
+                  </div>
+                );
+              }),
+            )}
+          </div>
         </div>
 
       </div>

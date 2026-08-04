@@ -1,50 +1,61 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  background: var(--gradient-module-card);
-  border-radius: 4px;
-  border: 1px solid var(--color-border);
-  min-width: 170px;
-  width: 170px;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--gradient-module-card);
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    min-width: 170px;
+    width: 170px;
+    overflow: hidden;
 }
 
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--color-secondary-accent);
-  padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-secondary-accent);
+    padding: 4px 6px;
 }
 
 .module-name {
-  color: var(--color-text);
-  font-size: 11px;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+    color: var(--color-text);
+    font-size: 11px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .remove-button {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
-  padding: 0 2px;
-  border-radius: 2px;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+    border-radius: 2px;
 }
 
 .remove-button:hover {
-  color: var(--color-error);
-  background: rgba(239, 68, 68, 0.15);
+    color: var(--color-error);
+    background: rgba(239, 68, 68, 0.15);
 }
 
 .params {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px 4px;
-  padding: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 4px;
+    padding: 6px;
+}
+
+@media (max-width: var(--bp-sm)) {
+    .container {
+        min-width: 140px;
+        width: 140px;
+    }
+
+    .module-name {
+        font-size: 10px;
+    }
 }

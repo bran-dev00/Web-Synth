@@ -1,74 +1,101 @@
-.close-button{
-    position:absolute;
-    right:30px;
-    top:5%;
+.close-button {
+    position: absolute;
+    right: 30px;
+    top: 5%;
     background-color: var(--color-effects-button);
     border-radius: 4px;
     border: 1px solid var(--color-border);
-    padding:8px;
+    padding: 8px;
     margin-bottom: 1rem;
-    transition: all .3s ease;
-    height:fit-content;
+    transition: all 0.3s ease;
+    height: fit-content;
 }
 
-.wrapper{
-    background-color:var(--color-effects-button);
-    padding:6px;
+.wrapper {
+    background-color: var(--color-effects-button);
+    padding: 6px;
     border-radius: 8px;
     font-family: "Audiowide", "Inter", sans-serif;
 }
 
-.separator-line{
-    width:100%;
-    height:2px;
-    background-color:rgb(255, 255, 255);
+.separator-line {
+    width: 100%;
+    height: 2px;
+    background-color: rgb(255, 255, 255);
     stroke-linecap: round;
-
 }
 
-.background{
-    background-color:var(--color-effects-modal-background);
-    height:500px;
-    padding:16px;
+.background {
+    background-color: var(--color-effects-modal-background);
+    height: 500px;
+    padding: 16px;
 }
 
-.header{
-    display:flex;
+.header {
+    display: flex;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     width: 100%;
     background-color: var(--color-effects-modal-background);
     border-bottom: 2px solid var(--color-effects-button);
 }
 
-
-.close-button:hover{
-    background-color:var(--color-error);
-    cursor:pointer;
+.close-button:hover {
+    background-color: var(--color-error);
+    cursor: pointer;
 }
 
-.buttons-wrapper{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
+.buttons-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
     padding-top: 4px;
 }
 
-.effect-button{
+.effect-button {
     background-color: var(--color-effects-button);
     border-radius: 4px;
     border: 1px solid var(--color-border);
     padding: 16px;
-    margin:2px;
+    margin: 2px;
     min-width: 100%;
     cursor: pointer;
     /* box-shadow: 1px 3px 6px #103968; */
 }
 
-.effect-button:hover{
+.effect-button:hover {
     background-color: var(--color-effects-button-hover);
 }
 
-.overlay{
-  min-width: 500px;
+.overlay {
+    min-width: 500px;
+}
+
+@media (max-width: var(--bp-md)) {
+    .overlay {
+        min-width: unset;
+        width: 90vw;
+        max-width: 500px;
+    }
+
+    .background {
+        height: auto;
+        max-height: 70dvh;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: var(--bp-sm)) {
+    .overlay {
+        width: 95vw;
+    }
+
+    .buttons-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .close-button {
+        right: 12px;
+        top: 12px;
+    }
 }
