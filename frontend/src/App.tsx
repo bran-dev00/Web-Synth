@@ -1,13 +1,10 @@
 import { useEffect, useState, useContext, useRef } from "react";
-import * as Tone from "tone";
 import "./styles/layout.css"
 import "./App.css";
 import useKeyboardSynth from "./hooks/useKeyboardSynth";
 import { SynthContext } from "@/contexts/SynthContext";
-import { PanelType } from "./types/types";
 import { panels } from "./data/Panels.ts";
 
-import EffectsRack from "./components/effects/effectsRack/EffectRack";
 import EffectsHeaderActions from "./components/effects/effectsRack/EffectsHeaderActions";
 import Panel from "./components/shared/panel/Panel";
 

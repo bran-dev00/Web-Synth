@@ -24,15 +24,17 @@ interface PianoKeyboardLayoutProps {
 const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   startingOctave = 2,
   numOctaves,
-  endingOctave = startingOctave + (numOctaves - startingOctave),
+  endingOctave = numOctaves,
   panelCollapsed = false,
 }) => {
   const { synthRef, playNote, releaseNote, activeNoteNames, polyphonicMode, canBePolyphonic, togglePolyphony, currentOctave } = useContext(SynthContext);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [labelType, setLabelType] = useState<KeyLabelType>("note");
+
   const keysWrapperRef = useRef<HTMLDivElement>(null);
   const keysContainerRef = useRef<HTMLDivElement>(null);
+
   const [whiteKeyWidth, setWhiteKeyWidth] = useState(50);
   const [visibleOctaves, setVisibleOctaves] = useState(1);
 
@@ -40,18 +42,29 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
   const computedEndingOctave = endingOctave ?? startingOctave + maxOctaves - 1;
 
   const updateLayout = useCallback(() => {
+    const LG_SCREEN_WIDTH = 1066;
     const wrapper = keysWrapperRef.current;
     if (!wrapper) return;
 
     const width = wrapper.getBoundingClientRect().width;
     if (width <= 0) return;
 
-    const minWhiteKeyWidth = 40;
+    const minWhiteKeyWidth = 50;
     const candidateOctaves = Math.floor(width / (minWhiteKeyWidth * 7));
+    // console.log("width", width);
+    // console.log("canditateOctaves", candidateOctaves);
+
     const newVisibleOctaves = Math.max(1, Math.min(maxOctaves, candidateOctaves || 1));
     const newWhiteKeyWidth = width / (newVisibleOctaves * 7);
 
-    setVisibleOctaves(newVisibleOctaves);
+    // console.log("new visible octaves:", newVisibleOctaves);
+    // console.log("maxOctaves", maxOctaves);
+
+    if (width > LG_SCREEN_WIDTH && newVisibleOctaves < maxOctaves) {
+      setVisibleOctaves(maxOctaves - 1);
+    } else {
+      setVisibleOctaves(newVisibleOctaves);
+    }
     setWhiteKeyWidth(newWhiteKeyWidth);
   }, [maxOctaves]);
 
@@ -110,7 +123,6 @@ const PianoKeyboardLayout: React.FC<PianoKeyboardLayoutProps> = ({
       playNote(synthRef.current, note);
     }
   };
-
 
 
   const handleMouseUp = (note: Note) => {
