@@ -263,16 +263,19 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     const noteIndex = currentNotesPressed.current.findIndex((n) => n === note.name);
     if (noteIndex === -1) return; // Note not found in pressed notes
 
-    // PolySynth needs note name, others don't
+    const wasActiveNote = noteIndex === currentNotesPressed.current.length - 1;
+    currentNotesPressed.current.splice(noteIndex, 1);
+
     if (synth.name === "PolySynth") {
       (synth as Tone.PolySynth).triggerRelease(note.name);
-    } else {
-      // Monophonic synths can call triggerRelease without arguments
+    } else if (wasActiveNote && currentNotesPressed.current.length > 0) {
+      const nextNote = currentNotesPressed.current[currentNotesPressed.current.length - 1];
+      synth.triggerAttack(nextNote);
+    } else if (currentNotesPressed.current.length === 0) {
       // @ts-expect-error - TypeScript doesn't narrow the union properly, but this is safe at runtime
       synth.triggerRelease();
     }
 
-    currentNotesPressed.current.splice(noteIndex, 1);
     setActiveNoteNames([...currentNotesPressed.current]);
   };
 
