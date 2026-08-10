@@ -1,5 +1,5 @@
 import { Monophonic } from "tone/build/esm/instrument/Monophonic";
-import { Note, PolyCompatibleSynth } from "../types/types";
+import { Note, PolyCompatibleSynth, EffectType } from "../types/types";
 import * as Tone from "tone";
 import { Instrument } from "tone/build/esm/instrument/Instrument";
 
@@ -184,3 +184,42 @@ export const getPolyConstructor = (name: string): PolyCompatibleSynth | undefine
   };
   return map[name];
 };
+
+
+export function connectEffectChain(
+  target: Tone.ToneAudioNode,
+  masterGain: Tone.Gain | null | undefined,
+  chain: EffectType[] | undefined,
+) {
+  // Helper that calls disconnect if present on the node
+  const tryDisconnect = (node: unknown) => {
+    try {
+      const toneNode = node as { disconnect?: (...args: unknown[]) => void };
+      if (toneNode && typeof toneNode.disconnect === "function") {
+        toneNode.disconnect();
+      }
+    } catch (e) {
+      console.error("Error occurred while disconnecting node", e);
+    }
+  };
+
+  tryDisconnect(target);
+
+  let currentNode: Tone.ToneAudioNode = target;
+
+  if (!chain || chain.length === 0) {
+    if (masterGain) currentNode.connect(masterGain);
+    return;
+  }
+
+  for (const effect of chain) {
+    tryDisconnect(effect.instance);
+    const node = effect.instance as unknown as Tone.ToneAudioNode;
+    currentNode.connect(node);
+    currentNode = node;
+  }
+
+  if (masterGain) {
+    currentNode.connect(masterGain);
+  }
+}

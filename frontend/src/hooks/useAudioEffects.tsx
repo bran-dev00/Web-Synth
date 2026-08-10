@@ -1,6 +1,7 @@
 import { EffectInstance, EffectType, EffectTypeName } from "@/types/types";
 import * as Tone from "tone";
 import { SynthContext } from "@/contexts/SynthContext";
+import { connectEffectChain } from "@/utils/utils";
 import { useContext, useCallback } from "react";
 
 
@@ -121,9 +122,26 @@ export const useAudioEffects = () => {
         currentNode.connect(masterGainRef.current);
       }
 
-      console.log("Effect removed:", id);
+      // console.log("Effect removed:", id);
     } catch (error) {
       console.error("Error removing effect:", error);
+    }
+  }, [synthRef, masterGainRef, effectChain]);
+
+  const clearEffects = useCallback(() => {
+    setEffectChain([]);
+  }, [synthRef, masterGainRef, effectChain])
+
+  const reconnectAudioChain = useCallback((synth?: Tone.ToneAudioNode | null, masterGain?: Tone.Gain | null) => {
+    try {
+      const targetSynth = synth ?? synthRef?.current;
+      if (!targetSynth) {
+        throw new Error("No SynthRef Found");
+      }
+
+      connectEffectChain(targetSynth as Tone.ToneAudioNode, masterGain ?? masterGainRef?.current, effectChain);
+    } catch (error) {
+      console.error("Error reconnecting audio chain:", error);
     }
   }, [synthRef, masterGainRef, effectChain]);
 
@@ -134,6 +152,8 @@ export const useAudioEffects = () => {
   return {
     addEffect,
     removeEffect,
+    clearEffects,
     getActiveEffects,
+    reconnectAudioChain
   };
 };

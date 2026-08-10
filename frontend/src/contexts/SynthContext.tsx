@@ -2,6 +2,7 @@ import React, { createContext, useState, useRef, useEffect, useMemo } from "reac
 import * as Tone from "tone";
 import { SynthInstance, Note, EffectType, SynthRef } from "../types/types";
 import { createPolySynth, getPolyConstructor } from "../utils/utils";
+import { connectEffectChain } from "@/utils/utils";
 
 
 export type SynthContextType = {
@@ -141,10 +142,18 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
 
     synthRef.current.dispose();
     const polySynth = createPolySynth(constructor);
-    if (masterGainRef.current) {
-      polySynth.connect(masterGainRef.current);
-    }
     synthRef.current = polySynth;
+
+    // Connect effects chain to the new poly synth
+    try {
+      connectEffectChain(synthRef.current as unknown as Tone.ToneAudioNode, masterGainRef.current as Tone.Gain | null, effectChain);
+    } catch (err) {
+      console.error("Error connecting effect chain for poly synth:", err);
+      // Fallback: connect directly to masterGain
+      if (masterGainRef.current) {
+        try { (synthRef.current as unknown as Tone.ToneAudioNode).connect(masterGainRef.current); } catch (e) { }
+      }
+    }
 
     setPolyphonicMode(true);
   };
@@ -219,6 +228,17 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
           setCurrentSynthType("Synth");
           synthRef.current = new Tone.Synth().connect(gainNode);
           break;
+      }
+
+      // console.log("Synth changed:", newSynth);
+      // console.log("Effect Chain:", effectChain);
+      // Reconnect audio chain directly here so we use the latest effectChain and refs
+      try {
+        if (synthRef.current) {
+          connectEffectChain(synthRef.current as unknown as Tone.ToneAudioNode, masterGainRef.current as Tone.Gain | null, effectChain);
+        }
+      } catch (error) {
+        console.error("Error reconnecting audio chain after synth change:", error);
       }
     }
   };
