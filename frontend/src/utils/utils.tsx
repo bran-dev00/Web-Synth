@@ -1,8 +1,8 @@
-import { Note } from "../types/types";
+import { Monophonic } from "tone/build/esm/instrument/Monophonic";
+import { Note, PolyCompatibleSynth, EffectType } from "../types/types";
+import * as Tone from "tone";
+import { Instrument } from "tone/build/esm/instrument/Instrument";
 
-const notes: Note = [{ name: "C2", duration: "8n" }];
-
-// C,C#,D,D#,E,E#,F,F#,G,G#,A,A#,B,B#
 export const noteNames = [
   "C",
   "C#",
@@ -16,27 +16,210 @@ export const noteNames = [
   "A",
   "A#",
   "B",
-  "B#",
 ];
+
+export const defaultPianoHotkeys = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';', "'"];
+export const whiteKeyNames = ["C", "D", "E", "F", "G", "A", "B"];
+export const blackKeyNames = ["C#", "D#", "F#", "G#", "A#"];
+
+//Offset Positions
+export const blackKeyPositions = new Map([
+  ["C#", 0],
+  ["D#", 1],
+  ["F#", 3],
+  ["G#", 4],
+  ["A#", 5],
+]);
 
 export const noteOctaves = [2, 3, 4, 5, 6, 7];
 
-export const keyNoteMap = new Map<string, Note>([
-  ["a", { name: "C4", duration: "8n" }],
-  ["w", { name: "C#4", duration: "8n" }],
-  ["s", { name: "D4", duration: "8n" }],
-  ["e", { name: "D#4", duration: "8n" }],
-  ["d", { name: "E4", duration: "8n" }],
-  ["f", { name: "F4", duration: "8n" }],
-  ["t", { name: "F#4", duration: "8n" }],
-  ["g", { name: "G4", duration: "8n" }],
-  ["y", { name: "G#4", duration: "8n" }],
-  ["h", { name: "A4", duration: "8n" }],
-  ["u", { name: "A#4", duration: "8n" }],
-  ["j", { name: "B4", duration: "8n" }],
-  ["k", { name: "C5", duration: "8n" }],
-  ["o", { name: "C#5", duration: "8n" }],
-  ["l", { name: "D5", duration: "8n" }],
-  ["p", { name: "D#5", duration: "8n" }],
-  [";", { name: "E5", duration: "8n" }],
-]);
+export const isOctaveInBounds = (octave: number): boolean => {
+  if (octave < noteOctaves[0] || octave > noteOctaves[noteOctaves.length - 1]) {
+    console.error("starting octave is out of bounds");
+    return false;
+  }
+
+  return true;
+}
+
+export const getNotesByOctave = (start: number, end: number): Note[] => {
+  if (!isOctaveInBounds(start) || !isOctaveInBounds(end)) {
+    return [];
+  }
+
+  //loop through note names and append the octave number
+  const notes: Note[] = [];
+
+  for (let octave = start; octave <= end; octave++) {
+    noteNames.forEach((noteName) => {
+      const newNote: Note = {
+        name: `${noteName}${octave}`,
+        duration: "8n",
+      };
+      notes.push(newNote);
+    });
+  }
+
+  // console.log(notes);
+
+  return notes;
+};
+
+export const getOctaveGroups = (start: number, end: number) => {
+
+  if (!isOctaveInBounds(start) || !isOctaveInBounds(end)) {
+    return [];
+  }
+
+  const octaveGroups = [];
+
+  for (let octave = start; octave <= end; octave++) {
+    const allNotes: Note[] = [];
+    const whiteKeys: Note[] = [];
+    const blackKeys: Note[] = [];
+
+    noteNames.forEach((noteName) => {
+      const note: Note = {
+        name: `${noteName}${octave}`,
+        duration: "8n",
+      };
+
+      allNotes.push(note);
+      if (noteName.includes("#")) {
+        blackKeys.push(note);
+      } else {
+        whiteKeys.push(note);
+      }
+    });
+
+    octaveGroups.push({
+      octave,
+      whiteKeys,
+      blackKeys,
+      allNotes,
+    });
+  }
+
+  return octaveGroups;
+};
+
+export const getBlackKeyOffset = (
+  blackKeyNote: string,
+  whiteKeyWidth: number = 50,
+  octaveIndex: number = 0,
+): number => {
+
+  const blackKeyWidth = whiteKeyWidth - 15;
+  const blackKeyOffset = whiteKeyWidth - blackKeyWidth / 2;
+
+  const noteName = blackKeyNote.replace(/\d+$/, "");
+
+  const whiteKeyPosition = blackKeyPositions.get(noteName);
+
+  if (whiteKeyPosition === undefined) {
+    console.error(`Invalid black Key: ${blackKeyNote}`);
+    return 0;
+  }
+
+  //Calculate offset
+  const octaveOffset = octaveIndex * whiteKeyNames.length * whiteKeyWidth;
+  const positionOffset = whiteKeyPosition * whiteKeyWidth + blackKeyOffset;
+
+  return octaveOffset + positionOffset;
+};
+
+
+export const keyNoteMapByOctave = (octave: number) => {
+  if (!isOctaveInBounds(octave)) {
+    console.error("octave is out of bounds");
+    return new Map<string, Note>();
+  }
+
+  const map = new Map<string, Note>();
+
+  defaultPianoHotkeys.forEach((key, index) => {
+    const noteName = noteNames[index % noteNames.length];
+    const noteOctave = index >= noteNames.length ? octave + 1 : octave;
+    const note: Note = {
+      name: `${noteName}${noteOctave}`,
+      duration: "8n",
+    };
+    map.set(key, note);
+  });
+
+  return map;
+};
+
+//returns a map of the corresponding hotekeys used for a note in a given octave
+export const getNoteToKeyMap = (octave: number): Map<string, string> => {
+  const map = new Map<string, string>();
+
+  defaultPianoHotkeys.forEach((key, index) => {
+    const noteName = noteNames[index % noteNames.length];
+    const noteOctave = index >= noteNames.length ? octave + 1 : octave;
+    map.set(`${noteName}${noteOctave}`, key);
+  });
+
+  return map;
+};
+
+
+/*
+   PolySynth is not a synthesizer by itself, 
+   it merely manages voices of one of the other types of synths,
+   allowing any of the monophonic synthesizers to be polyphonic.
+   - Tonejs Docs
+ */
+export const createPolySynth = (instrument: PolyCompatibleSynth) => {
+  const polySynth = new Tone.PolySynth(instrument);
+  return polySynth;
+}
+
+export const getPolyConstructor = (name: string): PolyCompatibleSynth | undefined => {
+  const map: Record<string, PolyCompatibleSynth | undefined> = {
+    Synth: Tone.Synth,
+    AMSynth: Tone.AMSynth,
+    FMSynth: Tone.FMSynth,
+    MonoSynth: Tone.MonoSynth,
+  };
+  return map[name];
+};
+
+
+export function connectEffectChain(
+  target: Tone.ToneAudioNode,
+  masterGain: Tone.Gain | null | undefined,
+  chain: EffectType[] | undefined,
+) {
+  // Helper that calls disconnect if present on the node
+  const tryDisconnect = (node: unknown) => {
+    try {
+      const toneNode = node as { disconnect?: (...args: unknown[]) => void };
+      if (toneNode && typeof toneNode.disconnect === "function") {
+        toneNode.disconnect();
+      }
+    } catch (e) {
+      console.error("Error occurred while disconnecting node", e);
+    }
+  };
+
+  tryDisconnect(target);
+
+  let currentNode: Tone.ToneAudioNode = target;
+
+  if (!chain || chain.length === 0) {
+    if (masterGain) currentNode.connect(masterGain);
+    return;
+  }
+
+  for (const effect of chain) {
+    tryDisconnect(effect.instance);
+    const node = effect.instance as unknown as Tone.ToneAudioNode;
+    currentNode.connect(node);
+    currentNode = node;
+  }
+
+  if (masterGain) {
+    currentNode.connect(masterGain);
+  }
+}

@@ -1,141 +1,69 @@
-import { useEffect, useState, useContext } from "react";
-import * as Tone from "tone";
+import { useEffect, useState, useContext, useRef } from "react";
+import "./styles/layout.css"
 import "./App.css";
 import useKeyboardSynth from "./hooks/useKeyboardSynth";
-
-import { Slider } from "@/components/ui/slider";
 import { SynthContext } from "@/contexts/SynthContext";
-import { SynthTypes, Note } from "@/types/types";
-import SynthSelect from "@/components/Synth/SynthSelect";
+import { panels } from "./data/Panels.ts";
+
+import EffectsHeaderActions from "./components/effects/effectsRack/EffectsHeaderActions";
+import Panel from "./components/shared/panel/Panel";
+
+
+import Playground from "@/components/playground/Playground";
+import PianoKeyboardLayout from "./components/pianoKeyboard/PianoKeyboardLayout";
+import HelpModal from "./components/shared/helpModal/HelpModal";
+
 
 function App() {
-  // const { synthRef, playNote } = useKeyboardSynth();
-
   const {
     synthRef,
-    currentSynthType,
-    playNote,
-    releaseNote,
-    triggerAttackRelease,
   } = useContext(SynthContext);
 
-  //keyboard mapping handling
+  //keyboard IO handling
   useKeyboardSynth();
 
-  const [sliderValue, setSliderValue] = useState([40]);
   const [currSynthName, setCurrSynthName] = useState(synthRef?.current?.name);
 
   useEffect(() => {
     setCurrSynthName(synthRef?.current?.name);
   }, [synthRef?.current]);
 
-  const notes: Note[] = [
-    { name: "C2", duration: "8n" },
-    { name: "D2", duration: "8n" },
-    { name: "E2", duration: "8n" },
-    { name: "F2", duration: "8n" },
-    { name: "G2", duration: "8n" },
-    { name: "A2", duration: "8n" },
-    { name: "B2", duration: "8n" },
-    { name: "C3", duration: "8n" },
-    { name: "D3", duration: "8n" },
-    { name: "E3", duration: "8n" },
-    { name: "F3", duration: "8n" },
-    { name: "G3", duration: "8n" },
-    { name: "A4", duration: "8n" },
-    { name: "B4", duration: "8n" },
-    { name: "C4", duration: "8n" },
-    { name: "D4", duration: "8n" },
-    { name: "E4", duration: "8n" },
-    { name: "F4", duration: "8n" },
-    { name: "G4", duration: "8n" },
-    { name: "A5", duration: "8n" },
-    { name: "B5", duration: "8n" },
-  ];
+  const [debugStatus, setDebugStatus] = useState<boolean>(false);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
-  const listNotes = notes.map((note: Note) => (
-    <button
-      key={note.name}
-      // onClick={() => handleToggle(note)}
-      onMouseDown={() => {
-        if (synthRef?.current) {
-          playNote(synthRef.current, note);
-        }
-      }}
-      onMouseUp={() => {
-        if (synthRef?.current) {
-          releaseNote(synthRef.current, note);
-        }
-      }}
-      onMouseLeave={() => {
-        if (synthRef?.current) {
-          releaseNote(synthRef.current, note);
-        }
-      }}
-    >
-      {note.name}
-    </button>
-  ));
+  const helpDialogRef = useRef<HTMLDialogElement>(null);
+
 
   return (
     <>
-      <h1>Current Synth: {currSynthName}</h1>
-      <div>
-        <SynthSelect />
+      <div className="background">
+        <div className="main-container">
+          <main className="main-content">
+            <Panel
+              className="panel-wrapper"
+              panels={panels}
+              headerActions={{
+                "Effects": <EffectsHeaderActions />,
+              }}
+              onToggleCollapse={setIsPanelCollapsed}
+            />
+
+            {/* numOctaves is exclusive */}
+            <PianoKeyboardLayout
+              numOctaves={6}
+              panelCollapsed={isPanelCollapsed}
+              onOpenHelp={() => helpDialogRef.current?.showModal()}
+            />
+            <HelpModal dialogRef={helpDialogRef} closeDialog={() => helpDialogRef.current?.close()} />
+          </main>
+        </div>
       </div>
 
-      <div className="card">
-        <button
-          onMouseDown={() => {
-            synthRef?.current?.triggerAttackRelease("C4", "8n");
-          }}
-          onMouseUp={() => synthRef?.current?.triggerRelease("C4")}
-        >
-          Start Sound
-        </button>
-        <button
-          //Play note C4 for a duration of an 8th note
-          onClick={() => {
-            // This stops "C4" from playing, until a new render is triggered for some reason.
-            // Weird bug that I need to figure out.
-            synthRef?.current?.dispose();
-            console.log("STOP ALL SOUNDS CLICKED");
-          }}
-        >
-          STOP ALL SOUNDS!!
-        </button>
-      </div>
-
-      <div>{listNotes}</div>
-
-      <div>
-        <Slider
-          label="Frequency Slider"
-          width={"200px"}
-          defaultValue={[40]}
-          value={sliderValue}
-          onValueChange={(e: EventTarget) => setSliderValue(e.value)}
-        ></Slider>
-
-        <p>{sliderValue}</p>
-      </div>
-
-      <div>
-        {/* <ul>
-          <li>
-            <p>{synthRef.current?.name}</p>
-          </li>
-          <li>
-            <p>{synthRef.current?.name}</p>
-          </li>
-          <li>
-            <p>{synth.output.toString()}</p>
-          </li>
-          <li>
-            <p>{synth.volume.value.toString()}</p>
-          </li>
-        </ul> */}
-      </div>
+      {debugStatus && (
+        <>
+          <Playground />
+        </>
+      )}
     </>
   );
 }

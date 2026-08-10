@@ -1,0 +1,55 @@
+.synth-select {
+    display: inline-block;
+    margin-inline: 0.5rem;
+    max-width: 200px;
+}
+
+select {
+    padding: 8px 12px;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 2px solid var(--color-secondary-white);
+    background-color: var(--color-secondary-accent);
+    color: white;
+    cursor: pointer;
+    transition: all 200ms ease;
+    min-width: 150px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px;
+    padding-right: 36px;
+}
+
+select:hover {
+    background-color: var(--color-accent-dark);
+    border-color: var(--color-accent-light);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--color-accent-light);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background-color: var(--color-accent-dark);
+}
+
+@media (max-width: var(--bp-sm)) {
+    .synth-select {
+        max-width: 100%;
+        margin-inline: 0;
+    }
+
+    select {
+        min-width: unset;
+        width: 100%;
+    }
+}
+
+option {
+    padding: 8px;
+    background-color: var(--color-accent);
+    color: white;
+}

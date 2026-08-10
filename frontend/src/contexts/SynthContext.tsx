@@ -1,176 +1,316 @@
-import React, { createContext, useState, useRef, useEffect } from "react";
+import React, { createContext, useState, useRef, useEffect, useMemo } from "react";
 import * as Tone from "tone";
-import { SynthTypes, Note } from "../types/types";
-import { useKeyboardSynth } from "@/hooks/useKeyboardSynth";
-// synthtypes
+import { SynthInstance, Note, EffectType, SynthRef } from "../types/types";
+import { createPolySynth, getPolyConstructor } from "../utils/utils";
+import { connectEffectChain } from "@/utils/utils";
 
-{
-  /* 
-  SynthTypes = "AMSynth" | "FMSynth" | "PolySynth" | "MonoSynth" |
-  "MembraneSynth" | "PluckSynth" | "NoiseSynth" | "MetalSynth" | "DuoSynth";
 
-  Tone.Synth, Tone.AmSynth, Tone.FMSynth, Tone.PolySynth,
-  Tone.MonoSynth, Tone.MembraneSynth, Tone.PluckSynth, Tone.NoiseSynth,
-  Tone.MetalSynth, Tone.DuoSynth
-     
-
-  */
-}
-
-export interface SynthContextType {
-  synthRef: React.RefObject<SynthTypes | null> | null;
+export type SynthContextType = {
+  synthRef: SynthRef;
+  masterGainRef: React.RefObject<Tone.Gain | null>;
   currentSynthType: string;
-  isPolyphonic: boolean;
+  polyphonicMode: boolean;
+  canBePolyphonic: boolean;
+  effectChain: EffectType[];
+  activeNoteNames: string[];
+  currentOctave: number;
+  volume: number;
 
+  setEffectChain: React.Dispatch<React.SetStateAction<EffectType[]>>;
+  setVolume: (volume: number) => void;
+
+  updateOctave: (newOctave: number) => void;
   changeSynth: (newSynth: string) => void;
-  playNote: (synth: SynthTypes, note: Note) => void;
-  releaseNote: (synth: SynthTypes, note: Note) => void;
-  triggerAttackRelease: (synth: SynthTypes, note: Note) => void;
+  togglePolyphony: () => void;
+  setPolyphonyOn: () => void;
+  setPolyphonyOff: () => void;
+  playNote: (synth: SynthInstance, note: Note) => void;
+  releaseNote: (synth: SynthInstance, note: Note) => void;
+  triggerAttackRelease: (synth: SynthInstance, note: Note) => void;
 }
+
 
 export const SynthContext = createContext<SynthContextType>({
   synthRef: null,
+  masterGainRef: { current: null },
   currentSynthType: "",
-  isPolyphonic: false,
-  changeSynth: () => {},
-  playNote: () => {},
-  releaseNote: () => {},
-  triggerAttackRelease: () => {},
+  polyphonicMode: false,
+  canBePolyphonic: false,
+  effectChain: [],
+  activeNoteNames: [],
+  currentOctave: 4,
+  volume: 1,
+
+  setEffectChain: () => { },
+  setVolume: () => { },
+  updateOctave: () => { },
+  changeSynth: () => { },
+  togglePolyphony: () => { },
+  setPolyphonyOn: () => { },
+  setPolyphonyOff: () => { },
+  playNote: () => { },
+  releaseNote: () => { },
+  triggerAttackRelease: () => { },
 });
 
-interface SynthProviderProps {
+type SynthProviderProps = {
   children: React.ReactNode;
 }
 
-export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
-  const synthRef = useRef<SynthTypes | null>(null);
-  const [currentSynthType, setCurrentSynthType] = useState<string>(
-    synthRef.current?.name || ""
-  );
-  const [isPolyphonic, setIsPolyphonic] = useState<boolean>(true);
 
+export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
+  const synthRef = useRef<SynthInstance | null>(null);
+  const masterGainRef = useRef<Tone.Gain | null>(null);
+
+  const [currentSynthType, setCurrentSynthType] = useState<string>(
+    synthRef.current?.name || "",
+  );
+
+  const [volume, setVolumeState] = useState<number>(1);
+
+  //The current State of the synths mode either poly on or off.
+  const [polyphonicMode, setPolyphonicMode] = useState<boolean>(false);
+
+  //Remembers old synth when toggling polyphony on, so it can be restored when toggling off
+  const [baseSynthName, setBaseSynthName] = useState<string | null>(null);
+  const currentNotesPressed = useRef<string[]>([]);
+  const [activeNoteNames, setActiveNoteNames] = useState<string[]>([]);
+  const [currentOctave, setCurrentOctave] = useState<number>(4);
+
+
+  const [effectChain, setEffectChain] = useState<EffectType[]>([]);
+
+  // const effects = new Map<EffectTypeName, EffectType[]>();
+
+  //Initialize synthRef and masterGainRef on load/initial render
   useEffect(() => {
     Tone.start();
-    synthRef.current = new Tone.Synth().toDestination();
+    const masterGain = new Tone.Gain(1).toDestination();
+    masterGainRef.current = masterGain;
 
+    const initialSynth = new Tone.Synth().connect(masterGain);
+
+    synthRef.current = initialSynth;
+    setCurrentSynthType(synthRef.current.name);
+
+    //Clean up
     return () => {
       if (synthRef?.current) {
         synthRef.current.dispose();
       }
+      if (masterGainRef.current) {
+        masterGainRef.current.dispose();
+      }
     };
   }, []);
 
+  const updateOctave = (newOctave: number) => {
+    if (newOctave < 1 || newOctave > 7) {
+      console.error("Octave out of bounds. Must be between 1 and 7.");
+      return;
+    }
+
+    setCurrentOctave(newOctave);
+  }
+
+  const setVolume = (newVolume: number) => {
+    setVolumeState(newVolume);
+    if (masterGainRef.current) {
+      masterGainRef.current.gain.value = newVolume;
+    }
+  }
+
+  const canBePolyphonic = useMemo(() => {
+    if (polyphonicMode) return true;
+    const name = synthRef.current?.name;
+    return !!getPolyConstructor(name || "");
+  }, [currentSynthType, polyphonicMode]);
+
+  const setPolyphonyOn = () => {
+    if (!synthRef?.current) return;
+
+    const synthName = synthRef.current.name;
+    const constructor = getPolyConstructor(synthName);
+    if (!constructor) {
+      console.warn(`Synth type ${synthName} is not poly-compatible`);
+      return;
+    }
+
+    setBaseSynthName(
+      synthName === "PolySynth" ? (baseSynthName ?? "Synth") : synthName,
+    );
+
+    synthRef.current.dispose();
+    const polySynth = createPolySynth(constructor);
+    synthRef.current = polySynth;
+
+    // Connect effects chain to the new poly synth
+    try {
+      connectEffectChain(synthRef.current as unknown as Tone.ToneAudioNode, masterGainRef.current as Tone.Gain | null, effectChain);
+    } catch (err) {
+      console.error("Error connecting effect chain for poly synth:", err);
+      // Fallback: connect directly to masterGain
+      if (masterGainRef.current) {
+        try { (synthRef.current as unknown as Tone.ToneAudioNode).connect(masterGainRef.current); }
+        catch (e) {
+          console.error("Error connecting to master gain:", e);
+        }
+      }
+    }
+
+    setPolyphonicMode(true);
+  };
+
+  const setPolyphonyOff = () => {
+    if (!synthRef?.current) return;
+
+    const synthToRestore = baseSynthName ?? "Synth";
+    changeSynth(synthToRestore);
+  };
+
+  const togglePolyphony = () => {
+    if (polyphonicMode) {
+      setPolyphonyOff();
+    } else {
+      setPolyphonyOn();
+    }
+  };
+
   const changeSynth = (newSynth: string) => {
+    setPolyphonicMode(false);
+    setBaseSynthName(null);
+
     if (synthRef?.current) {
       synthRef?.current.dispose();
 
+      const gainNode = masterGainRef.current;
+      if (!gainNode) return;
+
       switch (newSynth) {
+        case "Synth":
+          setCurrentSynthType("Synth");
+          synthRef.current = new Tone.Synth().connect(gainNode);
+          break;
         case "AMSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("AMSynth");
-          synthRef.current = new Tone.AMSynth().toDestination();
+          synthRef.current = new Tone.AMSynth().connect(gainNode);
           break;
         case "FMSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("FMSynth");
-          synthRef.current = new Tone.FMSynth().toDestination();
+          synthRef.current = new Tone.FMSynth().connect(gainNode);
           break;
         case "PolySynth":
-          setIsPolyphonic(true);
           setCurrentSynthType("PolySynth");
-          synthRef.current = new Tone.PolySynth(Tone.FMSynth).toDestination();
+          synthRef.current = new Tone.PolySynth(Tone.AMSynth).connect(gainNode);
           break;
         case "MonoSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("MonoSynth");
-          synthRef.current = new Tone.MonoSynth().toDestination();
+          synthRef.current = new Tone.MonoSynth().connect(gainNode);
           break;
         case "MembraneSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("MembraneSynth");
-          synthRef.current = new Tone.MembraneSynth().toDestination();
+          synthRef.current = new Tone.MembraneSynth().connect(gainNode);
           break;
         case "PluckSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("PluckSynth");
-          synthRef.current = new Tone.PluckSynth().toDestination();
+          synthRef.current = new Tone.PluckSynth().connect(gainNode);
           break;
         case "NoiseSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("NoiseSynth");
-          synthRef.current = new Tone.NoiseSynth().toDestination();
+          synthRef.current = new Tone.NoiseSynth().connect(gainNode);
           break;
         case "MetalSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("MetalSynth");
-          synthRef.current = new Tone.MetalSynth().toDestination();
+          synthRef.current = new Tone.MetalSynth().connect(gainNode);
           break;
         case "DuoSynth":
-          setIsPolyphonic(false);
           setCurrentSynthType("DuoSynth");
-          synthRef.current = new Tone.DuoSynth().toDestination();
+          synthRef.current = new Tone.DuoSynth().connect(gainNode);
           break;
         default:
-          setIsPolyphonic(false);
-          setCurrentSynthType("AMSynth");
-          synthRef.current = new Tone.AMSynth().toDestination();
+          setCurrentSynthType("Synth");
+          synthRef.current = new Tone.Synth().connect(gainNode);
           break;
       }
-    }
-  };
 
-  const currentNotesPressed: string[] = [];
-
-  const playNote = (synth: SynthTypes, note: Note) => {
-    if (synth) {
-      if (synth.name == "PolySynth") {
-        if (currentNotesPressed.includes(note.name)) return;
-        currentNotesPressed.push(note.name);
-        synth.triggerAttack(note.name);
-      } else {
-        if (currentNotesPressed.includes(note.name)) return;
-        currentNotesPressed.push(note.name);
-        synth.triggerAttack(note.name);
+      // console.log("Synth changed:", newSynth);
+      // console.log("Effect Chain:", effectChain);
+      // Reconnect audio chain directly here so we use the latest effectChain and refs
+      try {
+        if (synthRef.current) {
+          connectEffectChain(synthRef.current as unknown as Tone.ToneAudioNode, masterGainRef.current as Tone.Gain | null, effectChain);
+        }
+      } catch (error) {
+        console.error("Error reconnecting audio chain after synth change:", error);
       }
     }
   };
 
-  const stopNote = (synth: SynthTypes, note: Note) => {
-    if (synth) {
-      if (synth.name == "PolySynth") {
-        if (!note) return;
 
-        const noteIndex = currentNotesPressed.findIndex((n) => n === note.name);
-        if (noteIndex !== -1) {
-          synth.triggerRelease(note.name);
-          currentNotesPressed.splice(noteIndex, 1);
-        }
-      } else {
-        if (!note) return;
+  //TODO: Note-Duration Parameters
+  const playNote = (synth: SynthInstance, note: Note) => {
+    if (!synth || !note) return
 
-        const noteIndex = currentNotesPressed.findIndex((n) => n === note.name);
-        if (noteIndex !== -1) {
-          // synth.triggerRelease(note.name);
-          synth.triggerRelease();
-          currentNotesPressed.splice(noteIndex, 1);
-        }
-      }
-    }
+    //prevents duplicate notes
+    if (currentNotesPressed.current.includes(note.name)) return;
+
+    currentNotesPressed.current.push(note.name);
+    setActiveNoteNames([...currentNotesPressed.current]);
+    synth.triggerAttack(note.name);
   };
 
-  const triggerAttackRelease = (synth: SynthTypes, note: Note) => {
+  const releaseNote = (synth: SynthInstance, note: Note) => {
+    //Do nothing 
+    if (!synth || !note) return;
+
+    const noteIndex = currentNotesPressed.current.findIndex((n) => n === note.name);
+    if (noteIndex === -1) return; // Note not found in pressed notes
+
+    currentNotesPressed.current.splice(noteIndex, 1);
+
+    if (synth.name === "PolySynth") {
+      (synth as Tone.PolySynth).triggerRelease(note.name);
+    } else {
+      if (currentNotesPressed.current.length > 0) {
+        const lastNote = currentNotesPressed.current[currentNotesPressed.current.length - 1];
+        synth.triggerAttack(lastNote);
+      } else {
+        // Monophonic synths can call triggerRelease without arguments
+        // @ts-expect-error - TypeScript doesn't narrow the union properly, but this is safe at runtime
+        synth.triggerRelease();
+      }
+    }
+
+    setActiveNoteNames([...currentNotesPressed.current]);
+  };
+
+  const triggerAttackRelease = (synth: SynthInstance, note: Note) => {
     if (synth) {
       synth.triggerAttackRelease(note.name, "8n");
     }
   };
 
+  //Create the synthValue object that will be passed as the Context's value with everything initialized
   const synthValue: SynthContextType = {
     synthRef: synthRef,
+    masterGainRef: masterGainRef,
     currentSynthType: currentSynthType,
-    isPolyphonic: isPolyphonic,
+    polyphonicMode: polyphonicMode,
+    canBePolyphonic: canBePolyphonic,
+    effectChain: effectChain,
+    activeNoteNames: activeNoteNames,
+    currentOctave: currentOctave,
+    volume: volume,
+
+    setEffectChain: setEffectChain,
+    setVolume: setVolume,
+    updateOctave: updateOctave,
     changeSynth: changeSynth,
+    togglePolyphony: togglePolyphony,
+    setPolyphonyOn: setPolyphonyOn,
+    setPolyphonyOff: setPolyphonyOff,
     playNote: playNote,
-    releaseNote: stopNote,
+    releaseNote: releaseNote,
     triggerAttackRelease: triggerAttackRelease,
   };
 
@@ -178,5 +318,4 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     <SynthContext.Provider value={synthValue}>{children}</SynthContext.Provider>
   );
 };
-
 export default SynthProvider;

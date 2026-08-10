@@ -1,0 +1,18 @@
+.addButton {
+  background-color: var(--color-secondary-accent);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  transition: all 200ms ease;
+  white-space: nowrap;
+}
+
+.addButton:hover {
+  background-color: var(--color-accent-dark);
+  border-color: var(--color-accent-light);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}

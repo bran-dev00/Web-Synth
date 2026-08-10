@@ -1,0 +1,163 @@
+.piano-keyboard-layout {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    width: 100%;
+}
+
+.container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+}
+
+.keyboard-settings {
+    display: flex;
+    width: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 8px 12px;
+    border-radius: 6px 6px 0px 0px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+.keyboard-settings .label-text {
+    font-size: 1em;
+    color: var(--color-text-secondary);
+}
+
+.keys-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.keys-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-width: 0;
+    --white-key-width: max(28px, calc(100cqw / 35));
+    --white-key-height: clamp(110px, 18vw, 200px);
+    --black-key-width: calc(var(--white-key-width) - 15px);
+    --black-key-height: calc(var(--white-key-height) * 0.65);
+}
+
+.black-key-wrapper {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.black-key-wrapper > * {
+    pointer-events: auto;
+}
+
+.control-group {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.25em;
+    font-family:
+        "Inter",
+        system-ui,
+        -apple-system,
+        sans-serif;
+}
+
+.label-toggle {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.label-toggle:hover {
+    background: var(--color-surface-light);
+    border-color: var(--color-text-secondary);
+}
+
+.help-button {
+    margin-left: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    min-width: 36px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+}
+
+.help-button:hover {
+    background: var(--color-surface-light);
+    border-color: var(--color-text-secondary);
+}
+
+.panelCollapsed {
+    margin-top: -150px;
+}
+
+@media (max-width: var(--bp-md)) {
+    .keys-container {
+        --white-key-width: max(28px, calc(100cqw / 35));
+        --white-key-height: 140px;
+        --black-key-height: 90px;
+    }
+
+    .control-group {
+        font-size: 1em;
+    }
+
+    .panelCollapsed {
+        margin-top: -80px;
+    }
+}
+
+@media (max-width: var(--bp-sm)) {
+    .keys-container {
+        --white-key-width: max(24px, calc(100cqw / 35));
+        --white-key-height: 110px;
+        --black-key-height: 72px;
+    }
+
+    .keyboard-settings {
+        gap: 8px;
+        padding: 6px 8px;
+    }
+
+    .panelCollapsed {
+        margin-top: -40px;
+    }
+}

@@ -1,0 +1,66 @@
+:root{
+    /* Breakpoints (for reference in media queries) */
+    --bp-sm: 480px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
+
+    /* Spacing */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.25rem;
+    --spacing-6: 1.5rem;
+    --spacing-7: 1.75rem;
+    --spacing-8: 2rem;
+    --spacing-9: 2.25rem;
+    --spacing-10: 2.5rem;
+
+    --color-background: #0f172a;
+    --color-secondary-background: #6399DA;
+
+    --color-surface: #121F37;
+    --color-surface-light: #334155;
+
+    --color-text: #f1f5f9;
+    --color-text-secondary: #cbd5e1;
+    
+    --color-primary: #1e40af;
+    --color-primary-light: #3b82f6;
+    --color-primary-dark: #1e3a8a;
+    
+    --color-secondary: #0c4a6e;
+    --color-tertiary: #075985;
+    
+    /* Accent Colors - Teal */
+    --color-accent: #0891b2;
+    --color-secondary-accent:#6793BF;
+
+    /* Effect Modal */
+    --color-effects-modal-background:#17224B;
+    --color-effects-button: #6793BF;
+    --color-effects-button-hover: #4a6fa5;
+    --color-close-button-hover:#ef4444;
+
+    /* Nav */
+    --color-nav-button:#6793BF;
+
+
+    /* Other */
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-border: #334155;
+    --color-muted: #7276ac9f;
+
+    /* Gradients */
+    --gradient-module-card: linear-gradient(135deg, #1e293b 0%, #0a2d5f 100%);
+
+    /* Knob */
+    --knob-base: rgba(13, 16, 43, 0.548);
+    --knob-track: rgba(255, 255, 255, 0.877);
+    --knob-dot-outer: #5862eb;
+    --knob-fill:#077df3;
+    --knob-focus:#077df3;
+
+}

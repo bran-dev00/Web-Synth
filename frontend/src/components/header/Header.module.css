@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-primary);
+    background-color: var(--color-background);
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.container h1 {
+    margin: 0;
+    font-size: var(--font-size-3xl);
+    color: var(--color-primary-light);
+}
+
+.curr-synth{
+    margin-right: 2em;
+}

@@ -1,85 +1,84 @@
-import { useEffect, useRef, createContext, useContext } from "react";
-import * as Tone from "tone";
-import { Note, SynthTypes } from "../types/types";
-import { keyNoteMap } from "@/utils/utils";
+import { useEffect, useContext } from "react";
+import { Note, SynthInstance } from "../types/types";
+import { keyNoteMapByOctave } from "@/utils/utils";
 import { SynthContext } from "@/contexts/SynthContext";
 
-// const keyNoteMap = new Map<string, Note>([
-//   ["a", { name: "C3", duration: "8n" }],
-//   ["w", { name: "C#3", duration: "8n" }],
-//   ["s", { name: "D3", duration: "8n" }],
-//   ["e", { name: "D#3", duration: "8n" }],
-//   ["d", { name: "E3", duration: "8n" }],
-//   ["f", { name: "F3", duration: "8n" }],
-//   ["t", { name: "F#3", duration: "8n" }],
-//   ["g", { name: "G3", duration: "8n" }],
-//   ["y", { name: "G#3", duration: "8n" }],
-//   ["h", { name: "A3", duration: "8n" }],
-//   ["u", { name: "A#3", duration: "8n" }],
-//   ["j", { name: "B3", duration: "8n" }],
-//   ["k", { name: "C4", duration: "8n" }],
-//   ["o", { name: "C#4", duration: "8n" }],
-//   ["l", { name: "D4", duration: "8n" }],
-//   ["p", { name: "D#4", duration: "8n" }],
-//   [";", { name: "E4", duration: "8n" }],
-// ]);
 
 const handleKeyDown = (
   e: KeyboardEvent,
-  synthRef: SynthTypes | null,
-  playNote: (synthRef: SynthTypes, note: Note) => void
+  synthRef: SynthInstance | null | undefined,
+  playNote: (synthRef: SynthInstance, note: Note) => void,
+  updateOctave: (newOctave: number) => void,
+  currentOctave: number
 ) => {
-  if (synthRef) {
-    const note = keyNoteMap.get(e.key.toLowerCase());
-    if (note) {
-      playNote(synthRef, note);
+  if (!synthRef) return;
+
+  if (e.shiftKey && e.key === "ArrowUp") {
+    e.preventDefault();
+    if (currentOctave >= 7) {
+      console.warn("Already at maximum octave. Cannot shift up.");
+      return;
     }
+    updateOctave(currentOctave + 1);
+    return;
+  }
+
+  if (e.shiftKey && e.key === "ArrowDown") {
+    e.preventDefault();
+    if (currentOctave <= 2) {
+      console.warn("Already at minimum octave. Cannot shift down.");
+      return;
+    }
+    updateOctave(currentOctave - 1);
+    return;
+  }
+
+  const note = keyNoteMapByOctave(currentOctave).get(e.key.toLowerCase());
+  if (note) {
+    e.preventDefault();
+    playNote(synthRef, note);
   }
 };
 
 const handleKeyUp = (
   e: KeyboardEvent,
-  synthRef: SynthTypes | null,
-  releaseNote: (synthRef: SynthTypes, note: Note) => void
+  synthRef: SynthInstance | null | undefined,
+  releaseNote: (synthRef: SynthInstance, note: Note) => void,
+  currentOctave: number
 ) => {
   if (synthRef) {
-    const note = keyNoteMap.get(e.key.toLowerCase());
+
+    const note = keyNoteMapByOctave(currentOctave).get(e.key.toLowerCase());
 
     if (note) {
+      e.preventDefault();
       releaseNote(synthRef, note);
     }
   }
 };
 
 export const useKeyboardSynth = () => {
-  const { synthRef, playNote, releaseNote } = useContext(SynthContext);
-  // const synthRef = useRef<SynthTypes | null>(null);
+  const { synthRef, playNote, releaseNote, currentOctave, updateOctave } = useContext(SynthContext);
 
   useEffect(() => {
-    //TODO: later change the event listener to a specific component
     if (!synthRef?.current) {
       console.error("SynthRef is null");
-    } else {
-      window.addEventListener("keydown", (e) => {
-        handleKeyDown(e, synthRef?.current, playNote);
-      });
-
-      window.addEventListener("keyup", (e) =>
-        handleKeyUp(e, synthRef?.current, releaseNote)
-      );
+      return;
     }
 
-    //Cleanup function to remove event listeners and dispose of the synth
+    const onKeyDown = (e: KeyboardEvent) =>
+      handleKeyDown(e, synthRef.current, playNote, updateOctave, currentOctave);
+    const onKeyUp = (e: KeyboardEvent) =>
+      handleKeyUp(e, synthRef.current, releaseNote, currentOctave);
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+
     return () => {
-      synthRef?.current?.dispose();
-      window.removeEventListener("keydown", (e) =>
-        handleKeyDown(e, synthRef?.current, playNote)
-      );
-      window.removeEventListener("keyup", (e) =>
-        handleKeyUp(e, synthRef?.current, releaseNote)
-      );
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
     };
-  }, []);
+  }, [synthRef, playNote, releaseNote, updateOctave, currentOctave]);
 
   return {
     handleKeyDown,
