@@ -49,10 +49,11 @@ function App() {
             />
 
             {/* numOctaves is exclusive */}
-            <PianoKeyboardLayout numOctaves={6} panelCollapsed={isPanelCollapsed} />
-            <button className={"help-popup"} onClick={() => helpDialogRef.current?.showModal()}>
-              ?
-            </button>
+            <PianoKeyboardLayout
+              numOctaves={6}
+              panelCollapsed={isPanelCollapsed}
+              onOpenHelp={() => helpDialogRef.current?.showModal()}
+            />
             <HelpModal dialogRef={helpDialogRef} closeDialog={() => helpDialogRef.current?.close()} />
           </main>
         </div>

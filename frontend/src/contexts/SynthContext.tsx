@@ -151,7 +151,10 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
       console.error("Error connecting effect chain for poly synth:", err);
       // Fallback: connect directly to masterGain
       if (masterGainRef.current) {
-        try { (synthRef.current as unknown as Tone.ToneAudioNode).connect(masterGainRef.current); } catch (e) { }
+        try { (synthRef.current as unknown as Tone.ToneAudioNode).connect(masterGainRef.current); }
+        catch (e) {
+          console.error("Error connecting to master gain:", e);
+        }
       }
     }
 
@@ -263,17 +266,19 @@ export const SynthProvider: React.FC<SynthProviderProps> = ({ children }) => {
     const noteIndex = currentNotesPressed.current.findIndex((n) => n === note.name);
     if (noteIndex === -1) return; // Note not found in pressed notes
 
-    const wasActiveNote = noteIndex === currentNotesPressed.current.length - 1;
     currentNotesPressed.current.splice(noteIndex, 1);
 
     if (synth.name === "PolySynth") {
       (synth as Tone.PolySynth).triggerRelease(note.name);
-    } else if (wasActiveNote && currentNotesPressed.current.length > 0) {
-      const nextNote = currentNotesPressed.current[currentNotesPressed.current.length - 1];
-      synth.triggerAttack(nextNote);
-    } else if (currentNotesPressed.current.length === 0) {
-      // @ts-expect-error - TypeScript doesn't narrow the union properly, but this is safe at runtime
-      synth.triggerRelease();
+    } else {
+      if (currentNotesPressed.current.length > 0) {
+        const lastNote = currentNotesPressed.current[currentNotesPressed.current.length - 1];
+        synth.triggerAttack(lastNote);
+      } else {
+        // Monophonic synths can call triggerRelease without arguments
+        // @ts-expect-error - TypeScript doesn't narrow the union properly, but this is safe at runtime
+        synth.triggerRelease();
+      }
     }
 
     setActiveNoteNames([...currentNotesPressed.current]);
